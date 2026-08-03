@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateCode } from '../data/codeGenerators';
-import { Code2, Copy, Check, Info, Sparkles } from 'lucide-react';
+import { Code2, Copy, Check, Info } from 'lucide-react';
 
 export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
   const [lang, setLang] = useState('c');
-  const [activeLineNumber, setActiveLineNumber] = useState(5); // Default highlight on for loop
+  const [activeLineNumber, setActiveLineNumber] = useState(3);
   const [copied, setCopied] = useState(false);
 
   const languages = [
@@ -16,6 +16,13 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
   ];
 
   const codeData = generateCode(patternId, rows, spacePadding, symbol, lang);
+
+  useEffect(() => {
+    // Reset active line when language or pattern changes to avoid freezing on stale line index
+    const defaultLine = Math.min(3, codeData.length);
+    setActiveLineNumber(defaultLine);
+  }, [lang, patternId, rows, symbol]);
+
   const activeLineObj = codeData.find((l) => l.lineNumber === activeLineNumber) || codeData[0];
 
   const handleCopyCode = () => {
@@ -45,10 +52,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
           <button
             key={l.id}
             className={`lang-tab ${lang === l.id ? 'active' : ''}`}
-            onClick={() => {
-              setLang(l.id);
-              setActiveLineNumber(4); // Reset active line
-            }}
+            onClick={() => setLang(l.id)}
           >
             {l.label}
           </button>

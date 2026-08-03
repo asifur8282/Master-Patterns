@@ -514,7 +514,7 @@ h1, h2, h3, h4, .brand-title {
   background: var(--terminal-bg);
   border: 1px solid var(--terminal-border);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow-x: auto;
   font-family: var(--font-mono);
   font-size: 0.9rem;
 }
@@ -588,4 +588,113 @@ h1, h2, h3, h4, .brand-title {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Mobile & Tablet Adjustments */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 16px;
+    gap: 8px;
+  }
+
+  .brand-logo {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+
+  .brand-title {
+    font-size: 1.2rem !important;
+  }
+
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .nav-actions .btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .gallery-container, .lab-container {
+    padding: 16px 12px;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .lab-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .lab-header h2 {
+    font-size: 1.4rem !important;
+  }
+
+  .controls-card, .canvas-card, .code-card {
+    padding: 16px;
+  }
+
+  .quick-btn-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .quick-btn-grid .btn {
+    padding: 8px 8px;
+    font-size: 0.78rem;
+  }
+
+  .canvas-terminal {
+    padding: 14px;
+    font-size: 0.9rem;
+    min-height: 220px;
+    max-height: 360px;
+  }
+
+  .code-container {
+    font-size: 0.8rem;
+  }
+
+  .code-line {
+    padding: 5px 10px;
+  }
+
+  .line-num {
+    width: 24px;
+    font-size: 0.75rem;
+  }
+
+  .explanation-box {
+    padding: 12px;
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-btn-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  
+  .search-input-wrapper {
+    min-width: 100%;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .category-pills {
+    justify-content: flex-start;
+  }
 }
