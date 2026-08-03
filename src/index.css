@@ -265,7 +265,7 @@ h1, h2, h3, h4, .brand-title {
 
 .hero-section {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   width: 100%;
 }
 
@@ -278,7 +278,7 @@ h1, h2, h3, h4, .brand-title {
   color: var(--text-secondary);
   font-size: 1.05rem;
   max-width: 650px;
-  margin: 0 auto 20px auto;
+  margin: 0 auto 16px auto;
 }
 
 .filter-bar {
@@ -293,19 +293,21 @@ h1, h2, h3, h4, .brand-title {
   min-width: 0;
 }
 
-/* Inline Flexbox Search Wrapper */
+/* Compact Flexbox Search Bar Wrapper */
 .search-input-wrapper {
   display: flex;
   align-items: center;
-  flex: 1 1 260px;
   width: 100%;
-  min-width: 0;
+  max-width: 480px;
   height: 44px;
+  max-height: 44px;
+  flex: 0 0 44px;
   padding: 0 14px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   background: var(--bg-input);
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .search-input-wrapper:focus-within {
@@ -714,7 +716,7 @@ h1, h2, h3, h4, .brand-title {
   }
 
   .hero-section {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .hero-title {
@@ -722,8 +724,8 @@ h1, h2, h3, h4, .brand-title {
   }
 
   .hero-subtitle {
-    font-size: 0.9rem;
-    margin-bottom: 14px;
+    font-size: 0.88rem;
+    margin-bottom: 12px;
   }
 
   .pattern-grid {
@@ -767,6 +769,8 @@ h1, h2, h3, h4, .brand-title {
     width: 100%;
     min-width: 100%;
     height: 42px;
+    max-height: 42px;
+    flex: 0 0 42px;
   }
 
   .filter-bar {
