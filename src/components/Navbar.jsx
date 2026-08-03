@@ -1,18 +1,18 @@
 import React from 'react';
-import { Sparkles, Sun, Moon, BookOpen, Layers } from 'lucide-react';
+import { Sun, Moon, BookOpen, Layers } from 'lucide-react';
 
 export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
   return (
     <header className="navbar">
       <div className="brand-container" onClick={() => setActiveView('gallery')}>
         <div className="brand-logo">
-          <Layers size={24} />
+          <Layers size={22} />
         </div>
         <div>
-          <h1 className="brand-title gradient-text" style={{ fontSize: '1.5rem', lineHeight: 1.1 }}>
+          <h1 className="brand-title gradient-text" style={{ fontSize: '1.4rem', lineHeight: 1.1 }}>
             Master Patterns
           </h1>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+          <span className="brand-subtitle" style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
             CS Pattern Laboratory
           </span>
         </div>
@@ -22,9 +22,10 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
         <button 
           className={`btn ${activeView === 'gallery' ? 'btn-primary' : ''}`}
           onClick={() => setActiveView('gallery')}
+          title="Catalog"
         >
           <BookOpen size={16} />
-          Pattern Catalog
+          <span className="nav-btn-text">Catalog</span>
         </button>
 
         <button 
@@ -32,7 +33,7 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
           onClick={toggleTheme}
           title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
         >
-          {theme === 'dark' ? <Sun size={20} color="#f59e0b" /> : <Moon size={20} color="#6366f1" />}
+          {theme === 'dark' ? <Sun size={18} color="#f59e0b" /> : <Moon size={18} color="#6366f1" />}
         </button>
       </div>
     </header>

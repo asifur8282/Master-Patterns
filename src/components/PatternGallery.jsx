@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PatternCard } from './PatternCard';
-import { Search, Sparkles, Terminal } from 'lucide-react';
+import { Search, Terminal } from 'lucide-react';
 
 export function PatternGallery({ patterns, onSelectPattern }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,7 +33,7 @@ export function PatternGallery({ patterns, onSelectPattern }) {
           <input
             type="text"
             className="search-input"
-            placeholder="Search pattern by name or ID (e.g. ast_001, Floyd)..."
+            placeholder="Search patterns (e.g. ast_001, Floyd)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
