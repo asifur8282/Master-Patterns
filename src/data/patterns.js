@@ -421,6 +421,87 @@ export const PATTERNS = [
       return steps;
     }
   },
+  {
+    id: "ast_011",
+    name: "Odd Star Pyramid (2*i - 1)",
+    category: "Pyramid",
+    difficulty: "Medium",
+    description: "Classic CS pyramid where row i prints (2*i - 1) symbols without inter-symbol spaces (1, 3, 5, 7, 9...).",
+    defaultRows: 5,
+    defaultSpaces: 0,
+    defaultSymbol: "*",
+    isSymbolCustomizable: true,
+    generateOutput: (rows, spacePadding = 0, symbol = "*") => {
+      const { symLen } = getUnitConfig(symbol, spacePadding);
+      let res = [];
+      for (let i = 1; i <= rows; i++) {
+        const spaces = " ".repeat((rows - i) * symLen);
+        const symbols = symbol.repeat(2 * i - 1);
+        res.push(spaces + symbols);
+      }
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 0, symbol = "*") => {
+      const { symLen } = getUnitConfig(symbol, spacePadding);
+      const steps = [];
+      let currentOutput = [];
+      for (let i = 1; i <= rows; i++) {
+        const spaces = " ".repeat((rows - i) * symLen);
+        const symbols = symbol.repeat(2 * i - 1);
+        const line = spaces + symbols;
+        currentOutput.push(line);
+        steps.push({
+          step: i,
+          row: i,
+          lineAdded: line,
+          explanation: `Row ${i}: Print ${rows - i} lead spaces, then ${2 * i - 1} '${symbol}' symbol(s).`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      return steps;
+    }
+  },
+  {
+    id: "ast_012",
+    name: "Inverted Odd Star Pyramid",
+    category: "Pyramid",
+    difficulty: "Medium",
+    description: "Upside-down pyramid starting at (2*rows - 1) symbols tapering down to 1 symbol.",
+    defaultRows: 5,
+    defaultSpaces: 0,
+    defaultSymbol: "*",
+    isSymbolCustomizable: true,
+    generateOutput: (rows, spacePadding = 0, symbol = "*") => {
+      const { symLen } = getUnitConfig(symbol, spacePadding);
+      let res = [];
+      for (let i = rows; i >= 1; i--) {
+        const spaces = " ".repeat((rows - i) * symLen);
+        const symbols = symbol.repeat(2 * i - 1);
+        res.push(spaces + symbols);
+      }
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 0, symbol = "*") => {
+      const { symLen } = getUnitConfig(symbol, spacePadding);
+      const steps = [];
+      let currentOutput = [];
+      let stepCount = 1;
+      for (let i = rows; i >= 1; i--) {
+        const spaces = " ".repeat((rows - i) * symLen);
+        const symbols = symbol.repeat(2 * i - 1);
+        const line = spaces + symbols;
+        currentOutput.push(line);
+        steps.push({
+          step: stepCount++,
+          row: stepCount,
+          lineAdded: line,
+          explanation: `Row ${stepCount}: Print ${rows - i} lead spaces, then ${2 * i - 1} '${symbol}' symbol(s).`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      return steps;
+    }
+  },
 
   // --- NUMBER PATTERNS ---
   {

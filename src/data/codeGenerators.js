@@ -14,6 +14,8 @@ export function generateCode(patternId, rows = 5, spacePadding = 1, symbol = "*"
     case "ast_008": return getAst008Code(rows, spacePadding, cleanSymbol, lang);
     case "ast_009": return getAst009Code(rows, spacePadding, cleanSymbol, lang);
     case "ast_010": return getAst010Code(rows, spacePadding, cleanSymbol, lang);
+    case "ast_011": return getAst011Code(rows, spacePadding, cleanSymbol, lang);
+    case "ast_012": return getAst012Code(rows, spacePadding, cleanSymbol, lang);
 
     case "num_001": return getNum001Code(rows, spacePadding, lang);
     case "num_002": return getNum002Code(rows, spacePadding, lang);
@@ -349,6 +351,134 @@ function getAst009Code(rows, sp, symbol, lang) {
 
 function getAst010Code(rows, sp, symbol, lang) {
   return getAst006Code(rows, sp, symbol, lang);
+}
+
+function getAst011Code(rows, sp, symbol, lang) {
+  const h = getSymbolHelpers(symbol, lang);
+
+  const cLines = [
+    { code: `int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `${h.decl}`, explanation: "Active symbol." },
+    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
+    { code: '    for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "Standard I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Leading spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= 2 * i - 1; j++) cout << symbol;', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class OddPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= 2 * i - 1; j++) System.out.print(symbol);', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Height." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    spaces = " " * (rows - i)', explanation: "Lead spaces." },
+    { code: '    symbols = symbol * (2 * i - 1)', explanation: "(2*i - 1) symbols." },
+    { code: '    print(spaces + symbols)', explanation: "Prints row.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Height." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    let spaces = " ".repeat(rows - i);', explanation: "Lead spaces." },
+    { code: '    let symbols = symbol.repeat(2 * i - 1);', explanation: "Repeats symbol (2*i - 1) times.", highlightType: "output" },
+    { code: '    console.log(spaces + symbols);', explanation: "Console output.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
+}
+
+function getAst012Code(rows, sp, symbol, lang) {
+  const h = getSymbolHelpers(symbol, lang);
+
+  const cLines = [
+    { code: `int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `${h.decl}`, explanation: "Active symbol." },
+    { code: 'for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements from N down to 1.", highlightType: "loop" },
+    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
+    { code: '    for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "Standard I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Leading spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= 2 * i - 1; j++) cout << symbol;', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class InvertedOddPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= 2 * i - 1; j++) System.out.print(symbol);', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Height." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: 'for i in range(rows, 0, -1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    spaces = " " * (rows - i)', explanation: "Lead spaces." },
+    { code: '    symbols = symbol * (2 * i - 1)', explanation: "(2*i - 1) symbols." },
+    { code: '    print(spaces + symbols)', explanation: "Prints row.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Height." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: 'for (let i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    let spaces = " ".repeat(rows - i);', explanation: "Lead spaces." },
+    { code: '    let symbols = symbol.repeat(2 * i - 1);', explanation: "Repeats symbol (2*i - 1) times.", highlightType: "output" },
+    { code: '    console.log(spaces + symbols);', explanation: "Console output.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 // --- NUMBER PATTERNS ---
