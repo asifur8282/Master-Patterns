@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Sparkles, Code2, Sliders } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { PatternControls } from './PatternControls';
 import { PatternOutput } from './PatternOutput';
 import { CodeViewer } from './CodeViewer';
@@ -16,40 +16,36 @@ export function PatternLab({ pattern, onBack }) {
     setSymbol(pattern.defaultSymbol || '*');
   }, [pattern.id]);
 
-  // Fallback to pattern default symbol if user is mid-typing empty string
   const activeSymbol = (symbol !== undefined && symbol !== null && symbol !== '') 
     ? symbol 
     : (pattern.defaultSymbol || '*');
 
-  // Generate rendered string output
   const output = pattern.generateOutput(rows, spacePadding, activeSymbol);
 
   return (
     <div className="lab-container">
-      {/* Navigation & Header */}
+      {/* Navigation & Header with Flex Wrap to Prevent Overflow */}
       <div className="lab-header">
-        <button className="btn" onClick={onBack}>
+        <button className="btn btn-sm" onClick={onBack}>
           <ArrowLeft size={16} />
           Back to Pattern Catalog
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span className="badge badge-indigo" style={{ fontSize: '0.9rem', padding: '6px 14px' }}>
-            {pattern.id}
-          </span>
-          <h2 style={{ fontSize: '1.8rem' }}>{pattern.name}</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', maxWidth: '100%', minWidth: 0 }}>
+          <span className="badge badge-indigo">{pattern.id}</span>
+          <h2 style={{ fontSize: '1.4rem', wordBreak: 'break-word', minWidth: 0 }}>{pattern.name}</h2>
           <span className="badge badge-cyan">{pattern.category}</span>
         </div>
       </div>
 
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '1.05rem' }}>
+      <p style={{ color: 'var(--text-secondary)', marginBottom: '20px', fontSize: '0.95rem', wordBreak: 'break-word' }}>
         {pattern.description}
       </p>
 
       {/* Main Grid Workspace */}
       <div className="lab-grid">
         {/* Left Column: Visual Canvas & Controls */}
-        <div>
+        <div style={{ minWidth: 0, width: '100%' }}>
           <PatternOutput output={output} rows={rows} symbol={activeSymbol} />
           
           <PatternControls
@@ -65,7 +61,7 @@ export function PatternLab({ pattern, onBack }) {
         </div>
 
         {/* Right Column: Code & Interactive Line Explanation */}
-        <div>
+        <div style={{ minWidth: 0, width: '100%' }}>
           <CodeViewer
             patternId={pattern.id}
             rows={rows}
@@ -75,13 +71,15 @@ export function PatternLab({ pattern, onBack }) {
         </div>
       </div>
 
-      {/* Bottom Step-by-Step Animation Debugger */}
-      <StepVisualizer
-        pattern={pattern}
-        rows={rows}
-        spacePadding={spacePadding}
-        symbol={activeSymbol}
-      />
+      {/* Bottom Step Visualizer */}
+      <div style={{ minWidth: 0, width: '100%' }}>
+        <StepVisualizer
+          pattern={pattern}
+          rows={rows}
+          spacePadding={spacePadding}
+          symbol={activeSymbol}
+        />
+      </div>
     </div>
   );
 }
