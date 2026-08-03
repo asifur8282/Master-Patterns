@@ -64,7 +64,7 @@ export function PatternGallery({ patterns, onSelectPattern }) {
         {filteredPatterns.length === 0 && (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
             <Terminal size={48} style={{ marginBottom: '12px', opacity: 0.5 }} />
-            <h3>No matching patterns found</h3>
+            <h2 style={{ fontSize: '1.1rem' }}>No matching patterns found</h2>
             <p>Try searching for another term like "star", "pyramid", or "001".</p>
           </div>
         )}

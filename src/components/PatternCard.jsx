@@ -24,7 +24,7 @@ export function PatternCard({ pattern, onSelect }) {
           </span>
         </div>
 
-        <h3 className="card-title">{pattern.name}</h3>
+        <h2 className="card-title">{pattern.name}</h2>
         <p className="card-desc">{pattern.description}</p>
 
         <div className="mini-preview">
