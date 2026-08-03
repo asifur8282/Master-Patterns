@@ -632,15 +632,24 @@ function getAst010Code(rows, sp, symbol, lang) {
 
 function getAst011Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang, sp);
+  const symLen = Array.from(symbol).length;
+
+  // Odd pyramid: symbols are PACKED (no inter-symbol spaces)
+  // so we use dedicated no-space print expressions per language
+  const printNoSpace = {
+    c: `printf("%c", symbol);`,
+    cpp: `cout << symbol;`,
+    java: `System.out.print(symbol);`
+  };
 
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `    ${h.decl}`, explanation: "Active symbol." },
+    { code: `    char symbol = '${symbol}';`, explanation: "Active symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
-    { code: `        for (int s = 1; s <= rows - i; s++) printf("%*s", ${h.symLen}, "");`, explanation: "Leading spaces offset matching symbol length.", highlightType: "inner" },
-    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= rows - i; s++) printf(" ");`, explanation: "1 leading space per offset unit to center the pyramid.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${printNoSpace.c}`, explanation: "Prints (2*i-1) symbols tightly packed — no spacing between them.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -652,10 +661,10 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: 'using namespace std;', explanation: "Namespace." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: `    char symbol = '${symbol}';`, explanation: "Symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: `        for (int s = 1; s <= rows - i; s++) cout << string(${h.symLen}, ' ');`, explanation: "Leading spaces matching symbol length.", highlightType: "inner" },
-    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= rows - i; s++) cout << " ";`, explanation: "1 leading space per offset unit.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${printNoSpace.cpp}`, explanation: "Prints (2*i-1) symbols tightly packed.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -666,10 +675,10 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: 'public class OddPyramid {', explanation: "Class." },
     { code: '    public static void main(String[] args) {', explanation: "Main." },
     { code: `        int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: `        char symbol = '${symbol}';`, explanation: "Symbol." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: `            for (int s = 1; s <= rows - i; s++) System.out.print(" ".repeat(${h.symLen}));`, explanation: "Spaces.", highlightType: "inner" },
-    { code: `            for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `            for (int s = 1; s <= rows - i; s++) System.out.print(" ");`, explanation: "1 lead space per offset unit.", highlightType: "inner" },
+    { code: `            for (int j = 1; j <= 2 * i - 1; j++) ${printNoSpace.java}`, explanation: "Prints (2*i-1) symbols tightly packed.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -680,8 +689,8 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: `rows = ${rows}`, explanation: "Height." },
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: `    spaces = " " * (rows - i) * ${h.symLen}`, explanation: "Lead spaces." },
-    { code: `    symbols = (symbol + "${h.spaces}") * (2 * i - 1)`, explanation: "Repeated symbols with spacing.", highlightType: "output" },
+    { code: `    spaces = " " * (rows - i)`, explanation: "1 lead space per offset unit." },
+    { code: `    symbols = symbol * (2 * i - 1)`, explanation: "Repeats symbol (2*i-1) times, no spacing.", highlightType: "output" },
     { code: '    print(spaces + symbols)', explanation: "Prints row.", highlightType: "output" }
   ];
 
@@ -689,8 +698,8 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: `const rows = ${rows};`, explanation: "Height." },
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: `    let spaces = " ".repeat((rows - i) * ${h.symLen});`, explanation: "Lead spaces." },
-    { code: `    let symbols = (symbol + "${h.spaces}").repeat(2 * i - 1);`, explanation: "Repeats symbol (2*i - 1) times with dynamic spacing.", highlightType: "output" },
+    { code: `    let spaces = " ".repeat(rows - i);`, explanation: "1 lead space per offset unit." },
+    { code: `    let symbols = symbol.repeat(2 * i - 1);`, explanation: "Repeats symbol (2*i-1) times, tightly packed.", highlightType: "output" },
     { code: '    console.log(spaces + symbols);', explanation: "Console output.", highlightType: "output" },
     { code: '}' }
   ];
@@ -701,14 +710,21 @@ function getAst011Code(rows, sp, symbol, lang) {
 function getAst012Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang, sp);
 
+  // Inverted Odd pyramid: symbols PACKED (no inter-symbol spaces)
+  const printNoSpace = {
+    c: `printf("%c", symbol);`,
+    cpp: `cout << symbol;`,
+    java: `System.out.print(symbol);`
+  };
+
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `    ${h.decl}`, explanation: "Active symbol." },
+    { code: `    char symbol = '${symbol}';`, explanation: "Active symbol." },
     { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements from N down to 1.", highlightType: "loop" },
-    { code: `        for (int s = 1; s <= rows - i; s++) printf("%*s", ${h.symLen}, "");`, explanation: "Leading spaces.", highlightType: "inner" },
-    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= rows - i; s++) printf(" ");`, explanation: "1 lead space per offset unit.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${printNoSpace.c}`, explanation: "Prints (2*i-1) symbols tightly packed.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -720,10 +736,10 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: 'using namespace std;', explanation: "Namespace." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: `    char symbol = '${symbol}';`, explanation: "Symbol." },
     { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: `        for (int s = 1; s <= rows - i; s++) cout << string(${h.symLen}, ' ');`, explanation: "Leading spaces.", highlightType: "inner" },
-    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols with spacing.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= rows - i; s++) cout << " ";`, explanation: "1 lead space per offset unit.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${printNoSpace.cpp}`, explanation: "Prints (2*i-1) symbols tightly packed.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -734,10 +750,10 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: 'public class InvertedOddPyramid {', explanation: "Class." },
     { code: '    public static void main(String[] args) {', explanation: "Main." },
     { code: `        int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: `        char symbol = '${symbol}';`, explanation: "Symbol." },
     { code: '        for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: `            for (int s = 1; s <= rows - i; s++) System.out.print(" ".repeat(${h.symLen}));`, explanation: "Spaces.", highlightType: "inner" },
-    { code: `            for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols with spacing.", highlightType: "output" },
+    { code: `            for (int s = 1; s <= rows - i; s++) System.out.print(" ");`, explanation: "1 lead space per offset unit.", highlightType: "inner" },
+    { code: `            for (int j = 1; j <= 2 * i - 1; j++) ${printNoSpace.java}`, explanation: "Prints (2*i-1) symbols tightly packed.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -748,8 +764,8 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: `rows = ${rows}`, explanation: "Height." },
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(rows, 0, -1):', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    spaces = " " * (rows - i)', explanation: "Lead spaces." },
-    { code: `    symbols = (symbol + "${h.spaces}") * (2 * i - 1)`, explanation: "Repeats symbols with custom spacing.", highlightType: "output" },
+    { code: '    spaces = " " * (rows - i)', explanation: "1 lead space per offset unit." },
+    { code: `    symbols = symbol * (2 * i - 1)`, explanation: "Repeats symbol (2*i-1) times, no spacing.", highlightType: "output" },
     { code: '    print(spaces + symbols)', explanation: "Prints row.", highlightType: "output" }
   ];
 
@@ -757,8 +773,8 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: `const rows = ${rows};`, explanation: "Height." },
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    let spaces = " ".repeat(rows - i);', explanation: "Lead spaces." },
-    { code: `    let symbols = (symbol + "${h.spaces}").repeat(2 * i - 1);`, explanation: "Repeats symbol (2*i - 1) times with dynamic spacing.", highlightType: "output" },
+    { code: '    let spaces = " ".repeat(rows - i);', explanation: "1 lead space per offset unit." },
+    { code: `    let symbols = symbol.repeat(2 * i - 1);`, explanation: "Repeats symbol (2*i-1) times, tightly packed.", highlightType: "output" },
     { code: '    console.log(spaces + symbols);', explanation: "Console output.", highlightType: "output" },
     { code: '}' }
   ];
