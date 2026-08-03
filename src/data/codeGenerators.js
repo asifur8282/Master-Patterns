@@ -1,5 +1,6 @@
 // Multi-language Code Generator with Line-by-Line Educational Explanations
 // Every snippet includes full, runnable entry wrappers (#include <stdio.h>, #include <iostream>, public class, main)
+// Bulletproof dynamic spacePadding support for both custom symbols and spacer gaps
 
 export function generateCode(patternId, rows = 5, spacePadding = 1, symbol = "*", lang = "c") {
   const cleanSymbol = symbol.replace(/'/g, "\\'").replace(/"/g, '\\"');
@@ -41,30 +42,31 @@ function buildAnnotatedCode(lines) {
   }));
 }
 
-function getSymbolHelpers(symbol, lang) {
+function getSymbolHelpers(symbol, lang, spacePadding = 1) {
   const isMulti = Array.from(symbol).length > 1;
+  const spaces = " ".repeat(spacePadding);
   
   let decl = `char symbol = '${symbol}';`;
-  let printSym = `printf("%c ", symbol);`;
+  let printSym = `printf("%c${spaces}", symbol);`;
 
   if (lang === "c") {
     decl = isMulti ? `char symbol[] = "${symbol}";` : `char symbol = '${symbol}';`;
-    printSym = isMulti ? `printf("%s ", symbol);` : `printf("%c ", symbol);`;
+    printSym = isMulti ? `printf("%s${spaces}", symbol);` : `printf("%c${spaces}", symbol);`;
   } else if (lang === "cpp") {
     decl = isMulti ? `string symbol = "${symbol}";` : `char symbol = '${symbol}';`;
-    printSym = `cout << symbol << " ";`;
+    printSym = spacePadding > 0 ? `cout << symbol << "${spaces}";` : `cout << symbol;`;
   } else if (lang === "java") {
     decl = isMulti ? `String symbol = "${symbol}";` : `char symbol = '${symbol}';`;
-    printSym = `System.out.print(symbol + " ");`;
+    printSym = spacePadding > 0 ? `System.out.print(symbol + "${spaces}");` : `System.out.print(symbol);`;
   } else if (lang === "python") {
     decl = `symbol = "${symbol}"`;
-    printSym = `print(symbol, end=" ")`;
+    printSym = spacePadding > 0 ? `print(symbol + "${spaces}", end="")` : `print(symbol, end="")`;
   } else if (lang === "js") {
     decl = `const symbol = "${symbol}";`;
-    printSym = `line += symbol + " ";`;
+    printSym = `line += symbol + "${spaces}";`;
   }
 
-  return { isMulti, decl, printSym };
+  return { isMulti, decl, printSym, spaces };
 }
 
 function renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines) {
@@ -78,7 +80,7 @@ function renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines) {
 // --- STAR PATTERNS ---
 
 function getAst001Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main execution entry." },
@@ -101,7 +103,7 @@ function getAst001Code(rows, sp, symbol, lang) {
     { code: `    ${h.decl}`, explanation: "Symbol declaration." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '            cout << symbol << " ";', explanation: "Prints symbol.", highlightType: "output" },
+    { code: `            ${h.printSym}`, explanation: "Prints symbol with dynamic padding.", highlightType: "output" },
     { code: '        }', explanation: "End inner." },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
@@ -115,7 +117,7 @@ function getAst001Code(rows, sp, symbol, lang) {
     { code: `        ${h.decl}`, explanation: "Symbol declaration." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '            for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '                System.out.print(symbol + " ");', explanation: "Prints symbol.", highlightType: "output" },
+    { code: `                ${h.printSym}`, explanation: "Prints symbol with padding.", highlightType: "output" },
     { code: '            }', explanation: "End inner." },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
@@ -127,7 +129,7 @@ function getAst001Code(rows, sp, symbol, lang) {
     { code: `symbol = "${symbol}"`, explanation: "Selected symbol." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
     { code: '    for j in range(i):', explanation: "INNER LOOP: i items per row.", highlightType: "inner" },
-    { code: '        print(symbol, end=" ")', explanation: "Prints symbol with space.", highlightType: "output" },
+    { code: `        ${h.printSym}`, explanation: "Prints symbol with dynamic spaces.", highlightType: "output" },
     { code: '    print()', explanation: "Row end newline.", highlightType: "output" }
   ];
   const jsLines = [
@@ -136,7 +138,7 @@ function getAst001Code(rows, sp, symbol, lang) {
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let line = "";', explanation: "Line buffer." },
     { code: '    for (let j = 1; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '        line += symbol + " ";', explanation: "Accumulates symbol.", highlightType: "output" },
+    { code: `        ${h.printSym}`, explanation: "Accumulates symbol with spacing.", highlightType: "output" },
     { code: '    }', explanation: "End inner." },
     { code: '    console.log(line);', explanation: "Console output.", highlightType: "output" },
     { code: '}' }
@@ -145,7 +147,7 @@ function getAst001Code(rows, sp, symbol, lang) {
 }
 
 function getAst002Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
@@ -167,7 +169,7 @@ function getAst002Code(rows, sp, symbol, lang) {
     { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) cout << "  ";', explanation: "Lead spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbols with padding.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -180,7 +182,7 @@ function getAst002Code(rows, sp, symbol, lang) {
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '            for (int s = 1; s <= rows - i; s++) System.out.print("  ");', explanation: "Lead spaces.", highlightType: "inner" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbols.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbols with padding.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -190,14 +192,14 @@ function getAst002Code(rows, sp, symbol, lang) {
     { code: `rows = ${rows}`, explanation: "Rows." },
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    print("  " * (rows - i) + (symbol + " ") * i)', explanation: "Prints aligned row.", highlightType: "output" }
+    { code: `    print("  " * (rows - i) + (symbol + "${h.spaces}") * i)`, explanation: "Prints aligned row with custom spacing.", highlightType: "output" }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let spaces = "  ".repeat(rows - i);', explanation: "Spaces." },
-    { code: '    let symbols = (symbol + " ").repeat(i);', explanation: "Symbols." },
+    { code: `    let symbols = (symbol + "${h.spaces}").repeat(i);`, explanation: "Symbols with dynamic spacing.", highlightType: "output" },
     { code: '    console.log(spaces + symbols);', explanation: "Output." },
     { code: '}' }
   ];
@@ -205,7 +207,7 @@ function getAst002Code(rows, sp, symbol, lang) {
 }
 
 function getAst003Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
@@ -225,7 +227,7 @@ function getAst003Code(rows, sp, symbol, lang) {
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '    for (int i = rows; i >= 1; i--) {', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbols with padding.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -237,7 +239,7 @@ function getAst003Code(rows, sp, symbol, lang) {
     { code: `        int rows = ${rows};`, explanation: "Rows." },
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '        for (int i = rows; i >= 1; i--) {', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbols.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbols with padding.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -247,20 +249,20 @@ function getAst003Code(rows, sp, symbol, lang) {
     { code: `rows = ${rows}`, explanation: "Rows." },
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(rows, 0, -1):', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
-    { code: '    print((symbol + " ") * i)', explanation: "Outputs row.", highlightType: "output" }
+    { code: `    print((symbol + "${h.spaces}") * i)`, explanation: "Outputs row with custom spacing.", highlightType: "output" }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = rows; i >= 1; i--) {', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
-    { code: '    console.log((symbol + " ").repeat(i));', explanation: "Outputs row.", highlightType: "output" },
+    { code: `    console.log((symbol + "${h.spaces}").repeat(i));`, explanation: "Outputs row with spacing.", highlightType: "output" },
     { code: '}' }
   ];
   return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst004Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
@@ -282,7 +284,7 @@ function getAst004Code(rows, sp, symbol, lang) {
     { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Lead spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbols with padding.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -295,7 +297,7 @@ function getAst004Code(rows, sp, symbol, lang) {
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbols.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbols with padding.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -305,14 +307,14 @@ function getAst004Code(rows, sp, symbol, lang) {
     { code: `rows = ${rows}`, explanation: "Height." },
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    print(" " * (rows - i) + (symbol + " ") * i)', explanation: "Outputs pyramid row.", highlightType: "output" }
+    { code: `    print(" " * (rows - i) + (symbol + "${h.spaces}") * i)`, explanation: "Outputs pyramid row with padding.", highlightType: "output" }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Height." },
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let spaces = " ".repeat(rows - i);', explanation: "Centering spaces." },
-    { code: '    let symbols = (symbol + " ").repeat(i);', explanation: "Pyramid symbols." },
+    { code: `    let symbols = (symbol + "${h.spaces}").repeat(i);`, explanation: "Pyramid symbols with custom spacing.", highlightType: "output" },
     { code: '    console.log(spaces + symbols);', explanation: "Outputs row." },
     { code: '}' }
   ];
@@ -320,7 +322,7 @@ function getAst004Code(rows, sp, symbol, lang) {
 }
 
 function getAst005Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
 
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
@@ -344,7 +346,7 @@ function getAst005Code(rows, sp, symbol, lang) {
     { code: `    string symbol = "${symbol}";`, explanation: "Active pattern symbol." },
     { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Counts down from rows to 1.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Prints lead spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbols with custom padding.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -358,7 +360,7 @@ function getAst005Code(rows, sp, symbol, lang) {
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol to print." },
     { code: '        for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements row index from N to 1.", highlightType: "loop" },
     { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Lead spaces.", highlightType: "inner" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbol + space.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Prints symbol + space.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Advances to next line.", highlightType: "output" },
     { code: '        }', explanation: "End outer loop." },
     { code: '    }', explanation: "End main." },
@@ -370,7 +372,7 @@ function getAst005Code(rows, sp, symbol, lang) {
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(rows, 0, -1):', explanation: "OUTER LOOP: Counts down from rows to 1.", highlightType: "loop" },
     { code: '    spaces = " " * (rows - i)', explanation: "Calculates lead spaces." },
-    { code: '    symbols = (symbol + " ") * i', explanation: "Repeats symbol i times." },
+    { code: `    symbols = (symbol + "${h.spaces}") * i`, explanation: "Repeats symbol with space.", highlightType: "output" },
     { code: '    print(spaces + symbols)', explanation: "Prints inverted pyramid line.", highlightType: "output" }
   ];
 
@@ -379,7 +381,7 @@ function getAst005Code(rows, sp, symbol, lang) {
     { code: `const symbol = "${symbol}";`, explanation: "Active symbol." },
     { code: 'for (let i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Counts down from rows to 1.", highlightType: "loop" },
     { code: '    let spaces = " ".repeat(rows - i);', explanation: "Leading spaces for centering." },
-    { code: '    let symbols = (symbol + " ").repeat(i);', explanation: "Repeats symbol i times.", highlightType: "output" },
+    { code: `    let symbols = (symbol + "${h.spaces}").repeat(i);`, explanation: "Repeats symbol i times with padding.", highlightType: "output" },
     { code: '    console.log(spaces + symbols);', explanation: "Outputs line to console.", highlightType: "output" },
     { code: '}' }
   ];
@@ -388,7 +390,7 @@ function getAst005Code(rows, sp, symbol, lang) {
 }
 
 function getAst006Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O." },
     { code: 'int main() {', explanation: "Main." },
@@ -415,12 +417,12 @@ function getAst006Code(rows, sp, symbol, lang) {
     { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "TOP PYRAMID.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Stars.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Stars with padding.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End top." },
     { code: '    for (int i = rows - 1; i >= 1; i--) {', explanation: "BOTTOM INVERTED PYRAMID.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Stars.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Stars with padding.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End bottom." },
     { code: '    return 0;', explanation: "Exit." },
@@ -433,12 +435,12 @@ function getAst006Code(rows, sp, symbol, lang) {
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "TOP PYRAMID.", highlightType: "loop" },
     { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Stars.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Stars with padding.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End top." },
     { code: '        for (int i = rows - 1; i >= 1; i--) {', explanation: "BOTTOM PYRAMID.", highlightType: "loop" },
     { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Stars.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Stars with padding.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End bottom." },
     { code: '    }', explanation: "End main." },
@@ -448,25 +450,25 @@ function getAst006Code(rows, sp, symbol, lang) {
     { code: `rows = ${rows}`, explanation: "Diamond size." },
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(1, rows + 1):', explanation: "TOP PYRAMID.", highlightType: "loop" },
-    { code: '    print(" " * (rows - i) + (symbol + " ") * i)', explanation: "Top row.", highlightType: "output" },
+    { code: `    print(" " * (rows - i) + (symbol + "${h.spaces}") * i)`, explanation: "Top row with custom padding.", highlightType: "output" },
     { code: 'for i in range(rows - 1, 0, -1):', explanation: "BOTTOM PYRAMID.", highlightType: "loop" },
-    { code: '    print(" " * (rows - i) + (symbol + " ") * i)', explanation: "Bottom row.", highlightType: "output" }
+    { code: `    print(" " * (rows - i) + (symbol + "${h.spaces}") * i)`, explanation: "Bottom row with custom padding.", highlightType: "output" }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Diamond size." },
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "TOP PYRAMID.", highlightType: "loop" },
-    { code: '    console.log(" ".repeat(rows - i) + (symbol + " ").repeat(i));', explanation: "Top row." },
+    { code: `    console.log(" ".repeat(rows - i) + (symbol + "${h.spaces}").repeat(i));`, explanation: "Top row with padding." },
     { code: '}' },
     { code: 'for (let i = rows - 1; i >= 1; i--) {', explanation: "BOTTOM PYRAMID.", highlightType: "loop" },
-    { code: '    console.log(" ".repeat(rows - i) + (symbol + " ").repeat(i));', explanation: "Bottom row." },
+    { code: `    console.log(" ".repeat(rows - i) + (symbol + "${h.spaces}").repeat(i));`, explanation: "Bottom row with padding." },
     { code: '}' }
   ];
   return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst007Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O." },
     { code: 'int main() {', explanation: "Main." },
@@ -491,7 +493,7 @@ function getAst007Code(rows, sp, symbol, lang) {
     { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '        for (int j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '            if (i==1 || i==rows || j==1 || j==rows) cout << symbol << " ";', explanation: "Border.", highlightType: "output" },
+    { code: `            if (i==1 || i==rows || j==1 || j==rows) cout << symbol << "${h.spaces}";`, explanation: "Border with custom padding.", highlightType: "output" },
     { code: '            else cout << "  ";', explanation: "Inside space.", highlightType: "output" },
     { code: '        }', explanation: "End inner." },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
@@ -506,7 +508,7 @@ function getAst007Code(rows, sp, symbol, lang) {
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '            for (int j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '                if (i==1 || i==rows || j==1 || j==rows) System.out.print(symbol + " ");', explanation: "Border.", highlightType: "output" },
+    { code: `                if (i==1 || i==rows || j==1 || j==rows) System.out.print(symbol + "${h.spaces}");`, explanation: "Border.", highlightType: "output" },
     { code: '                else System.out.print("  ");', explanation: "Inside space.", highlightType: "output" },
     { code: '            }', explanation: "End inner." },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
@@ -520,7 +522,7 @@ function getAst007Code(rows, sp, symbol, lang) {
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    for j in range(1, rows + 1):', explanation: "INNER LOOP.", highlightType: "inner" },
     { code: '        if i == 1 or i == rows or j == 1 or j == rows:', explanation: "Border check." },
-    { code: '            print(symbol, end=" ")', explanation: "Border print.", highlightType: "output" },
+    { code: `            print(symbol, end="${h.spaces}")`, explanation: "Border print with custom spacing.", highlightType: "output" },
     { code: '        else:', explanation: "Space check." },
     { code: '            print("  ", end="")', explanation: "Hollow space.", highlightType: "output" },
     { code: '    print()', explanation: "Newline.", highlightType: "output" }
@@ -531,7 +533,7 @@ function getAst007Code(rows, sp, symbol, lang) {
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let line = "";', explanation: "Buffer." },
     { code: '    for (let j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '        if (i===1 || i===rows || j===1 || j===rows) line += symbol + " ";', explanation: "Border." },
+    { code: `        if (i===1 || i===rows || j===1 || j===rows) line += symbol + "${h.spaces}";`, explanation: "Border." },
     { code: '        else line += "  ";', explanation: "Space." },
     { code: '    }', explanation: "End inner." },
     { code: '    console.log(line);', explanation: "Console output." },
@@ -541,7 +543,7 @@ function getAst007Code(rows, sp, symbol, lang) {
 }
 
 function getAst008Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O." },
     { code: 'int main() {', explanation: "Main." },
@@ -597,7 +599,7 @@ function getAst008Code(rows, sp, symbol, lang) {
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    spaces = " " * (rows - i)', explanation: "Spaces." },
     { code: '    if i == 1 or i == rows:', explanation: "Base/Top check." },
-    { code: '        symbols = (symbol + " ") * i', explanation: "Solid base." },
+    { code: `        symbols = (symbol + "${h.spaces}") * i`, explanation: "Solid base with padding.", highlightType: "output" },
     { code: '    else:', explanation: "Hollow interior." },
     { code: '        symbols = symbol + " " * (2 * (i - 2) + 1) + symbol', explanation: "Edges." },
     { code: '    print(spaces + symbols)', explanation: "Prints row." }
@@ -607,7 +609,7 @@ function getAst008Code(rows, sp, symbol, lang) {
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let spaces = " ".repeat(rows - i);', explanation: "Lead spaces." },
-    { code: '    if (i === 1 || i === rows) console.log(spaces + (symbol + " ").repeat(i));', explanation: "Solid." },
+    { code: `    if (i === 1 || i === rows) console.log(spaces + (symbol + "${h.spaces}").repeat(i));`, explanation: "Solid with dynamic spacing.", highlightType: "output" },
     { code: '    else console.log(spaces + symbol + " ".repeat(2 * (i - 2) + 1) + symbol);', explanation: "Hollow." },
     { code: '}' }
   ];
@@ -623,7 +625,7 @@ function getAst010Code(rows, sp, symbol, lang) {
 }
 
 function getAst011Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
 
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
@@ -632,7 +634,7 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: `    ${h.decl}`, explanation: "Active symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '        for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym, explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -647,7 +649,7 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Leading spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= 2 * i - 1; j++) cout << symbol;', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols with spacing.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -661,7 +663,7 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '            for (int j = 1; j <= 2 * i - 1; j++) System.out.print(symbol);', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols with spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -673,7 +675,7 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    spaces = " " * (rows - i)', explanation: "Lead spaces." },
-    { code: '    symbols = symbol * (2 * i - 1)', explanation: "(2*i - 1) symbols." },
+    { code: `    symbols = (symbol + "${h.spaces}") * (2 * i - 1)`, explanation: "Repeated symbols with spacing.", highlightType: "output" },
     { code: '    print(spaces + symbols)', explanation: "Prints row.", highlightType: "output" }
   ];
 
@@ -682,7 +684,7 @@ function getAst011Code(rows, sp, symbol, lang) {
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let spaces = " ".repeat(rows - i);', explanation: "Lead spaces." },
-    { code: '    let symbols = symbol.repeat(2 * i - 1);', explanation: "Repeats symbol (2*i - 1) times.", highlightType: "output" },
+    { code: `    let symbols = (symbol + "${h.spaces}").repeat(2 * i - 1);`, explanation: "Repeats symbol (2*i - 1) times with dynamic spacing.", highlightType: "output" },
     { code: '    console.log(spaces + symbols);', explanation: "Console output.", highlightType: "output" },
     { code: '}' }
   ];
@@ -691,7 +693,7 @@ function getAst011Code(rows, sp, symbol, lang) {
 }
 
 function getAst012Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
 
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
@@ -700,7 +702,7 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: `    ${h.decl}`, explanation: "Active symbol." },
     { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements from N down to 1.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '        for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym, explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -715,7 +717,7 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Leading spaces.", highlightType: "inner" },
-    { code: '        for (int j = 1; j <= 2 * i - 1; j++) cout << symbol;', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols with spacing.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer loop." },
     { code: '    return 0;', explanation: "Exit program." },
@@ -729,7 +731,7 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
     { code: '        for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '            for (int j = 1; j <= 2 * i - 1; j++) System.out.print(symbol);', explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= 2 * i - 1; j++) ${h.printSym}`, explanation: "Prints (2*i - 1) symbols with spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -741,7 +743,7 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: `symbol = "${symbol}"`, explanation: "Symbol." },
     { code: 'for i in range(rows, 0, -1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    spaces = " " * (rows - i)', explanation: "Lead spaces." },
-    { code: '    symbols = symbol * (2 * i - 1)', explanation: "(2*i - 1) symbols." },
+    { code: `    symbols = (symbol + "${h.spaces}") * (2 * i - 1)`, explanation: "Repeats symbols with custom spacing.", highlightType: "output" },
     { code: '    print(spaces + symbols)', explanation: "Prints row.", highlightType: "output" }
   ];
 
@@ -750,7 +752,7 @@ function getAst012Code(rows, sp, symbol, lang) {
     { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
     { code: 'for (let i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let spaces = " ".repeat(rows - i);', explanation: "Lead spaces." },
-    { code: '    let symbols = symbol.repeat(2 * i - 1);', explanation: "Repeats symbol (2*i - 1) times.", highlightType: "output" },
+    { code: `    let symbols = (symbol + "${h.spaces}").repeat(2 * i - 1);`, explanation: "Repeats symbol (2*i - 1) times with dynamic spacing.", highlightType: "output" },
     { code: '    console.log(spaces + symbols);', explanation: "Console output.", highlightType: "output" },
     { code: '}' }
   ];
@@ -761,12 +763,13 @@ function getAst012Code(rows, sp, symbol, lang) {
 // --- NUMBER PATTERNS ---
 
 function getNum001Code(rows, sp, lang) {
+  const spaces = " ".repeat(sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) printf("%d ", j);', explanation: "Prints column index j.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) printf("%d${spaces}", j);`, explanation: "Prints column index with padding spacing.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -778,7 +781,7 @@ function getNum001Code(rows, sp, lang) {
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) cout << j << " ";', explanation: "Prints j.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) cout << j << "${spaces}";`, explanation: "Prints index with dynamic padding spacing.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -789,7 +792,7 @@ function getNum001Code(rows, sp, lang) {
     { code: '    public static void main(String[] args) {', explanation: "Main." },
     { code: `        int rows = ${rows};`, explanation: "Rows." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(j + " ");', explanation: "Prints j.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) System.out.print(j + "${spaces}");`, explanation: "Prints index with spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -799,14 +802,14 @@ function getNum001Code(rows, sp, lang) {
     { code: `rows = ${rows}`, explanation: "Rows." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    for j in range(1, i + 1):', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '        print(j, end=" ")', explanation: "Prints column index j.", highlightType: "output" },
+    { code: `        print(j, end="${spaces}")`, explanation: "Prints index with custom padding spacing.", highlightType: "output" },
     { code: '    print()', explanation: "Newline.", highlightType: "output" }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let line = "";', explanation: "Line buffer." },
-    { code: '    for (let j = 1; j <= i; j++) line += j + " ";', explanation: "Appends j.", highlightType: "output" },
+    { code: `    for (let j = 1; j <= i; j++) line += j + "${spaces}";`, explanation: "Appends index with dynamic spacing.", highlightType: "output" },
     { code: '    console.log(line);', explanation: "Console log.", highlightType: "output" },
     { code: '}' }
   ];
@@ -814,12 +817,13 @@ function getNum001Code(rows, sp, lang) {
 }
 
 function getNum002Code(rows, sp, lang) {
+  const spaces = " ".repeat(sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) printf("%d ", i);', explanation: "Prints row index i.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) printf("%d${spaces}", i);`, explanation: "Prints row index i with custom padding.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -831,7 +835,7 @@ function getNum002Code(rows, sp, lang) {
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) cout << i << " ";', explanation: "Prints row index i.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) cout << i << "${spaces}";`, explanation: "Prints row index i with spacing.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -842,7 +846,7 @@ function getNum002Code(rows, sp, lang) {
     { code: '    public static void main(String[] args) {', explanation: "Main." },
     { code: `        int rows = ${rows};`, explanation: "Rows." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print(i + " ");', explanation: "Prints row index i.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) System.out.print(i + "${spaces}");`, explanation: "Prints row index i with spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -851,25 +855,26 @@ function getNum002Code(rows, sp, lang) {
   const pyLines = [
     { code: `rows = ${rows}`, explanation: "Rows." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    print((str(i) + " ") * i)', explanation: "Prints row index i repeated i times.", highlightType: "output" }
+    { code: `    print((str(i) + "${spaces}") * i)`, explanation: "Prints row index i repeated with padding.", highlightType: "output" }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    console.log((i + " ").repeat(i));', explanation: "Prints i repeated.", highlightType: "output" },
+    { code: `    console.log((i + "${spaces}").repeat(i));`, explanation: "Prints i repeated with dynamic spacing.", highlightType: "output" },
     { code: '}' }
   ];
   return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getNum004Code(rows, sp, lang) {
+  const spaces = " ".repeat(sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: '    int count = 1;', explanation: "Continuous counter.", highlightType: "variable" },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) printf("%d ", count++);', explanation: "Prints count++.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) printf("%d${spaces}", count++);`, explanation: "Prints count with dynamic spacing.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -882,7 +887,7 @@ function getNum004Code(rows, sp, lang) {
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: '    int count = 1;', explanation: "Counter." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) cout << count++ << " ";', explanation: "Prints count++.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) cout << count++ << "${spaces}";`, explanation: "Prints count with spacing.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -894,7 +899,7 @@ function getNum004Code(rows, sp, lang) {
     { code: `        int rows = ${rows};`, explanation: "Rows." },
     { code: '        int count = 1;', explanation: "Counter." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print((count++) + " ");', explanation: "Prints count++.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) System.out.print((count++) + "${spaces}");`, explanation: "Prints count with spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -905,7 +910,7 @@ function getNum004Code(rows, sp, lang) {
     { code: 'count = 1', explanation: "Counter." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    for j in range(1, i + 1):', explanation: "INNER LOOP." },
-    { code: '        print(count, end=" ")', explanation: "Prints count." },
+    { code: `        print(count, end="${spaces}")`, explanation: "Prints count with dynamic spacing.", highlightType: "output" },
     { code: '        count += 1', explanation: "Increments count." },
     { code: '    print()', explanation: "Newline." }
   ];
@@ -914,7 +919,7 @@ function getNum004Code(rows, sp, lang) {
     { code: 'let count = 1;', explanation: "Counter." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let line = "";', explanation: "Buffer." },
-    { code: '    for (let j = 1; j <= i; j++) line += (count++) + " ";', explanation: "Appends count++.", highlightType: "output" },
+    { code: `    for (let j = 1; j <= i; j++) line += (count++) + "${spaces}";`, explanation: "Appends count with custom spacing.", highlightType: "output" },
     { code: '    console.log(line);', explanation: "Log.", highlightType: "output" },
     { code: '}' }
   ];
@@ -1060,13 +1065,14 @@ function getNum006Code(rows, lang) {
 // --- CHARACTER PATTERNS ---
 
 function getChr001Code(rows, sp, symbol, lang) {
+  const spaces = " ".repeat(sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 0; j < i; j++) printf("%c ", startChar + j);', explanation: "ASCII increment.", highlightType: "output" },
+    { code: `        for (int j = 0; j < i; j++) printf("%c${spaces}", startChar + j);`, explanation: "ASCII increment with spacing.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -1079,7 +1085,7 @@ function getChr001Code(rows, sp, symbol, lang) {
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 0; j < i; j++) cout << (char)(startChar + j) << " ";', explanation: "ASCII increment.", highlightType: "output" },
+    { code: `        for (int j = 0; j < i; j++) cout << (char)(startChar + j) << "${spaces}";`, explanation: "ASCII increment with spacing.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -1091,7 +1097,7 @@ function getChr001Code(rows, sp, symbol, lang) {
     { code: `        int rows = ${rows};`, explanation: "Rows." },
     { code: `        char startChar = '${symbol}';`, explanation: "Start char." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '            for (int j = 0; j < i; j++) System.out.print((char)(startChar + j) + " ");', explanation: "Prints char.", highlightType: "output" },
+    { code: `            for (int j = 0; j < i; j++) System.out.print((char)(startChar + j) + "${spaces}");`, explanation: "Prints char with spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -1101,7 +1107,7 @@ function getChr001Code(rows, sp, symbol, lang) {
     { code: `rows = ${rows}`, explanation: "Rows." },
     { code: `start_char = "${symbol}"`, explanation: "Start char." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    line = "".join(chr(ord(start_char) + j) + " " for j in range(i))', explanation: "Constructs line." },
+    { code: `    line = "".join(chr(ord(start_char) + j) + "${spaces}" for j in range(i))`, explanation: "Constructs line with spacing." },
     { code: '    print(line)', explanation: "Prints line." }
   ];
   const jsLines = [
@@ -1110,7 +1116,7 @@ function getChr001Code(rows, sp, symbol, lang) {
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let line = "";', explanation: "Line buffer." },
     { code: '    for (let j = 0; j < i; j++) {', explanation: "INNER LOOP." },
-    { code: '        line += String.fromCharCode(startChar.charCodeAt(0) + j) + " ";', explanation: "Appends char.", highlightType: "output" },
+    { code: `        line += String.fromCharCode(startChar.charCodeAt(0) + j) + "${spaces}";`, explanation: "Appends char with dynamic spacing.", highlightType: "output" },
     { code: '    }', explanation: "End inner." },
     { code: '    console.log(line);', explanation: "Log.", highlightType: "output" },
     { code: '}' }
@@ -1119,13 +1125,14 @@ function getChr001Code(rows, sp, symbol, lang) {
 }
 
 function getChr002Code(rows, sp, symbol, lang) {
+  const spaces = " ".repeat(sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: `    char ch = '${symbol}';`, explanation: "Start character." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) printf("%c ", ch++);', explanation: "Increments char continuously.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) printf("%c${spaces}", ch++);`, explanation: "Increments char continuously with spacing.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -1138,7 +1145,7 @@ function getChr002Code(rows, sp, symbol, lang) {
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: `    char ch = '${symbol}';`, explanation: "Start char." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) cout << ch++ << " ";', explanation: "Increments char.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) cout << ch++ << "${spaces}";`, explanation: "Increments char with custom spacing.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -1150,7 +1157,7 @@ function getChr002Code(rows, sp, symbol, lang) {
     { code: `        int rows = ${rows};`, explanation: "Rows." },
     { code: `        char ch = '${symbol}';`, explanation: "Start char." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print((ch++) + " ");', explanation: "Increments char.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) System.out.print((ch++) + "${spaces}");`, explanation: "Increments char with dynamic spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -1161,7 +1168,7 @@ function getChr002Code(rows, sp, symbol, lang) {
     { code: `ch = ord("${symbol}")`, explanation: "Start ASCII." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    for j in range(i):', explanation: "INNER LOOP." },
-    { code: '        print(chr(ch), end=" ")', explanation: "Prints char." },
+    { code: `        print(chr(ch), end="${spaces}")`, explanation: "Prints char with custom padding.", highlightType: "output" },
     { code: '        ch += 1', explanation: "Increments char." },
     { code: '    print()', explanation: "Newline." }
   ];
@@ -1171,7 +1178,7 @@ function getChr002Code(rows, sp, symbol, lang) {
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    let line = "";', explanation: "Line buffer." },
     { code: '    for (let j = 1; j <= i; j++) {', explanation: "INNER LOOP." },
-    { code: '        line += String.fromCharCode(charCode++) + " ";', explanation: "Appends character and increments.", highlightType: "output" },
+    { code: `        line += String.fromCharCode(charCode++) + "${spaces}";`, explanation: "Appends character with custom dynamic spacing.", highlightType: "output" },
     { code: '    }', explanation: "End inner." },
     { code: '    console.log(line);', explanation: "Console output.", highlightType: "output" },
     { code: '}' }
@@ -1180,13 +1187,14 @@ function getChr002Code(rows, sp, symbol, lang) {
 }
 
 function getChr003Code(rows, sp, symbol, lang) {
+  const spaces = " ".repeat(sp);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) printf("%c ", startChar + i - 1);', explanation: "Row letter repeat.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) printf("%c${spaces}", startChar + i - 1);`, explanation: "Row letter repeat with dynamic padding.", highlightType: "output" },
     { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -1199,7 +1207,7 @@ function getChr003Code(rows, sp, symbol, lang) {
     { code: `    int rows = ${rows};`, explanation: "Rows." },
     { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '        for (int j = 1; j <= i; j++) cout << (char)(startChar + i - 1) << " ";', explanation: "Row letter repeat.", highlightType: "output" },
+    { code: `        for (int j = 1; j <= i; j++) cout << (char)(startChar + i - 1) << "${spaces}";`, explanation: "Row letter repeat with padding.", highlightType: "output" },
     { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
     { code: '    }', explanation: "End outer." },
     { code: '    return 0;', explanation: "Exit." },
@@ -1211,7 +1219,7 @@ function getChr003Code(rows, sp, symbol, lang) {
     { code: `        int rows = ${rows};`, explanation: "Rows." },
     { code: `        char startChar = '${symbol}';`, explanation: "Start char." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '            for (int j = 1; j <= i; j++) System.out.print((char)(startChar + i - 1) + " ");', explanation: "Row letter repeat.", highlightType: "output" },
+    { code: `            for (int j = 1; j <= i; j++) System.out.print((char)(startChar + i - 1) + "${spaces}");`, explanation: "Row letter repeat with custom spacing.", highlightType: "output" },
     { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
@@ -1222,14 +1230,14 @@ function getChr003Code(rows, sp, symbol, lang) {
     { code: `start_char = "${symbol}"`, explanation: "Start char." },
     { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    char = chr(ord(start_char) + i - 1)', explanation: "Calculates character for row." },
-    { code: '    print((char + " ") * i)', explanation: "Prints repeated character." }
+    { code: `    print((char + "${spaces}") * i)`, explanation: "Prints repeated character with spacing." }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
     { code: `const startChar = "${symbol}";`, explanation: "Start char." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '    const char = String.fromCharCode(startChar.charCodeAt(0) + i - 1);', explanation: "Row char." },
-    { code: '    console.log((char + " ").repeat(i));', explanation: "Console output." },
+    { code: `    console.log((char + "${spaces}").repeat(i));`, explanation: "Console output with dynamic spacing." },
     { code: '}' }
   ];
   return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
