@@ -627,8 +627,117 @@ function getAst009Code(rows, sp, symbol, lang) {
 }
 
 function getAst010Code(rows, sp, symbol, lang) {
-  return getAst006Code(rows, sp, symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
+
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Wing height." },
+    { code: `    char symbol = '${symbol}';`, explanation: "Symbol." },
+    { code: '    // Upper half', explanation: "Upper butterfly wings." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "UPPER HALF: i grows 1 to rows.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Left wing: i symbols.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= 2*(rows-i)*${h.unitWidth}; s++) printf(" ");`, explanation: "Middle gap shrinks as i grows.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Right wing: mirrors left.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End upper loop." },
+    { code: '    // Lower half', explanation: "Lower butterfly wings." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "LOWER HALF: i shrinks rows to 1.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Left wing.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= 2*(rows-i)*${h.unitWidth}; s++) printf(" ");`, explanation: "Middle gap grows as i shrinks.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Right wing.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End lower loop." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Wing height." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    // Upper half', explanation: "Upper butterfly." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "UPPER HALF.", highlightType: "loop" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Left wing.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= 2*(rows-i)*${h.unitWidth}; s++) cout << " ";`, explanation: "Middle gap.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Right wing.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End upper." },
+    { code: '    // Lower half', explanation: "Lower butterfly." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "LOWER HALF.", highlightType: "loop" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Left wing.", highlightType: "output" },
+    { code: `        for (int s = 1; s <= 2*(rows-i)*${h.unitWidth}; s++) cout << " ";`, explanation: "Middle gap.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Right wing.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End lower." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class ButterflyPattern {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Wing height." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        // Upper half', explanation: "Upper wings." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "UPPER HALF.", highlightType: "loop" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Left wing.", highlightType: "output" },
+    { code: `            for (int s = 1; s <= 2*(rows-i)*${h.unitWidth}; s++) System.out.print(" ");`, explanation: "Middle gap.", highlightType: "inner" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Right wing.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End upper." },
+    { code: '        // Lower half', explanation: "Lower wings." },
+    { code: '        for (int i = rows; i >= 1; i--) {', explanation: "LOWER HALF.", highlightType: "loop" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Left wing.", highlightType: "output" },
+    { code: `            for (int s = 1; s <= 2*(rows-i)*${h.unitWidth}; s++) System.out.print(" ");`, explanation: "Middle gap.", highlightType: "inner" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "Right wing.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End lower." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Wing height." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: '# Upper half', explanation: "Upper butterfly." },
+    { code: 'for i in range(1, rows + 1):', explanation: "UPPER HALF: i grows 1 to rows.", highlightType: "loop" },
+    { code: `    left = (symbol + "${h.spaces}") * i`, explanation: "Left wing: i symbols with spacing." },
+    { code: `    gap = " " * (2 * (rows - i) * ${h.unitWidth})`, explanation: "Middle gap: shrinks as i grows.", highlightType: "inner" },
+    { code: `    right = (symbol + "${h.spaces}") * i`, explanation: "Right wing: mirrors left.", highlightType: "output" },
+    { code: '    print(left + gap + right)', explanation: "Prints full butterfly row." },
+    { code: '# Lower half', explanation: "Lower butterfly." },
+    { code: 'for i in range(rows, 0, -1):', explanation: "LOWER HALF: i shrinks rows to 1.", highlightType: "loop" },
+    { code: `    left = (symbol + "${h.spaces}") * i`, explanation: "Left wing." },
+    { code: `    gap = " " * (2 * (rows - i) * ${h.unitWidth})`, explanation: "Middle gap: grows as i shrinks.", highlightType: "inner" },
+    { code: `    right = (symbol + "${h.spaces}") * i`, explanation: "Right wing.", highlightType: "output" },
+    { code: '    print(left + gap + right)', explanation: "Prints row." }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Wing height." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '// Upper half', explanation: "Upper butterfly wings." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "UPPER HALF: i grows 1 to rows.", highlightType: "loop" },
+    { code: `    const left = (symbol + "${h.spaces}").repeat(i);`, explanation: "Left wing: i symbols." },
+    { code: `    const gap = " ".repeat(2 * (rows - i) * ${h.unitWidth});`, explanation: "Middle gap: shrinks as i grows.", highlightType: "inner" },
+    { code: `    const right = (symbol + "${h.spaces}").repeat(i);`, explanation: "Right wing: mirrors left.", highlightType: "output" },
+    { code: '    console.log(left + gap + right);', explanation: "Prints row.", highlightType: "output" },
+    { code: '}' },
+    { code: '// Lower half', explanation: "Lower butterfly wings." },
+    { code: 'for (let i = rows; i >= 1; i--) {', explanation: "LOWER HALF: i shrinks rows to 1.", highlightType: "loop" },
+    { code: `    const left = (symbol + "${h.spaces}").repeat(i);`, explanation: "Left wing." },
+    { code: `    const gap = " ".repeat(2 * (rows - i) * ${h.unitWidth});`, explanation: "Middle gap: grows as i shrinks.", highlightType: "inner" },
+    { code: `    const right = (symbol + "${h.spaces}").repeat(i);`, explanation: "Right wing.", highlightType: "output" },
+    { code: '    console.log(left + gap + right);', explanation: "Prints row.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
+
 
 function getAst011Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang, sp);
