@@ -1,4 +1,5 @@
 // Multi-language Code Generator with Line-by-Line Educational Explanations
+// Every snippet includes full, runnable entry wrappers (#include <stdio.h>, #include <iostream>, public class, main)
 
 export function generateCode(patternId, rows = 5, spacePadding = 1, symbol = "*", lang = "c") {
   const cleanSymbol = symbol.replace(/'/g, "\\'").replace(/"/g, '\\"');
@@ -42,7 +43,6 @@ function buildAnnotatedCode(lines) {
 
 function getSymbolHelpers(symbol, lang) {
   const isMulti = Array.from(symbol).length > 1;
-  const symStr = isMulti ? `"${symbol}"` : `'${symbol}'`;
   
   let decl = `char symbol = '${symbol}';`;
   let printSym = `printf("%c ", symbol);`;
@@ -81,32 +81,24 @@ function getAst001Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },
-    { code: 'int main() {', explanation: "Main entry." },
-    { code: `    int rows = ${rows};`, explanation: `Rows count: ${rows}.` },
+    { code: 'int main() {', explanation: "Main execution entry." },
+    { code: `    int rows = ${rows};`, explanation: `Height of triangle.` },
     { code: `    ${h.decl}`, explanation: "Symbol variable." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row iterator.", highlightType: "loop" },
     { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Prints i symbols.", highlightType: "inner" },
     { code: `            ${h.printSym}`, explanation: "Outputs symbol.", highlightType: "output" },
-    { code: '        }', explanation: "End inner." },
-    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
-    { code: '    }', explanation: "End outer." },
-    { code: '    return 0;', explanation: "Exit." },
+    { code: '        }', explanation: "End inner loop." },
+    { code: '        printf("\\n");', explanation: "Moves to next line.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
     { code: '}' }
   ];
-  const pyLines = [
-    { code: `rows = ${rows}`, explanation: "Height." },
-    { code: `symbol = "${symbol}"`, explanation: "Selected symbol." },
-    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
-    { code: '    for j in range(i):', explanation: "INNER LOOP: i items per row.", highlightType: "inner" },
-    { code: '        print(symbol, end=" ")', explanation: "Prints symbol with space.", highlightType: "output" },
-    { code: '    print()', explanation: "Row end newline.", highlightType: "output" }
-  ];
   const cppLines = [
-    { code: '#include <iostream>', explanation: "I/O stream." },
-    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Standard namespace." },
     { code: 'int main() {', explanation: "Main entry." },
     { code: `    int rows = ${rows};`, explanation: "Rows count." },
-    { code: `    ${h.decl}`, explanation: "Symbol." },
+    { code: `    ${h.decl}`, explanation: "Symbol declaration." },
     { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
     { code: '            cout << symbol << " ";', explanation: "Prints symbol.", highlightType: "output" },
@@ -119,8 +111,8 @@ function getAst001Code(rows, sp, symbol, lang) {
   const javaLines = [
     { code: 'public class RightTriangle {', explanation: "Class declaration." },
     { code: '    public static void main(String[] args) {', explanation: "Main method." },
-    { code: `        int rows = ${rows};`, explanation: "Rows." },
-    { code: `        ${h.decl}`, explanation: "Symbol." },
+    { code: `        int rows = ${rows};`, explanation: "Rows count." },
+    { code: `        ${h.decl}`, explanation: "Symbol declaration." },
     { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
     { code: '            for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
     { code: '                System.out.print(symbol + " ");', explanation: "Prints symbol.", highlightType: "output" },
@@ -129,6 +121,14 @@ function getAst001Code(rows, sp, symbol, lang) {
     { code: '        }', explanation: "End outer." },
     { code: '    }', explanation: "End main." },
     { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Height." },
+    { code: `symbol = "${symbol}"`, explanation: "Selected symbol." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '    for j in range(i):', explanation: "INNER LOOP: i items per row.", highlightType: "inner" },
+    { code: '        print(symbol, end=" ")', explanation: "Prints symbol with space.", highlightType: "output" },
+    { code: '    print()', explanation: "Row end newline.", highlightType: "output" }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows count." },
@@ -147,12 +147,43 @@ function getAst001Code(rows, sp, symbol, lang) {
 function getAst002Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: `${h.decl}`, explanation: "Symbol." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf("  ");', explanation: "Leading spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Symbol loop.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows count." },
+    { code: `    ${h.decl}`, explanation: "Symbol variable." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf("  ");', explanation: "Leading spaces offset.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Prints symbols.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
+    { code: '}' }
+  ];
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << "  ";', explanation: "Lead spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class RightAlignedPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print("  ");', explanation: "Lead spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbols.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
     { code: '}' }
   ];
   const pyLines = [
@@ -170,17 +201,46 @@ function getAst002Code(rows, sp, symbol, lang) {
     { code: '    console.log(spaces + symbols);', explanation: "Output." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, pyLines, jsLines);
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst003Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: `${h.decl}`, explanation: "Symbol." },
-    { code: 'for (int i = rows; i >= 1; i--) {', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Prints i symbols.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows count." },
+    { code: `    ${h.decl}`, explanation: "Symbol declaration." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Prints i symbols.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
+    { code: '}' }
+  ];
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class InvertedRightTriangle {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = rows; i >= 1; i--) {', explanation: "DECREMENTING LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbols.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
     { code: '}' }
   ];
   const pyLines = [
@@ -196,18 +256,49 @@ function getAst003Code(rows, sp, symbol, lang) {
     { code: '    console.log((symbol + " ").repeat(i));', explanation: "Outputs row.", highlightType: "output" },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, pyLines, jsLines);
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst004Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Height." },
-    { code: `${h.decl}`, explanation: "Symbol." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Centering spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Symbol loop.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Height." },
+    { code: `    ${h.decl}`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Centering spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Symbol loop.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O header." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main." },
+    { code: `    int rows = ${rows};`, explanation: "Height." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Lead spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class FullPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Height." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbols.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
     { code: '}' }
   ];
   const pyLines = [
@@ -225,19 +316,23 @@ function getAst004Code(rows, sp, symbol, lang) {
     { code: '    console.log(spaces + symbols);', explanation: "Outputs row." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, pyLines, jsLines);
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst005Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
 
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Height of inverted pyramid." },
-    { code: `${h.decl}`, explanation: "Symbol character." },
-    { code: 'for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Starts at rows, counts down to 1.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Prints leading spaces for centering.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Prints symbol followed by space.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Moves to next row.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Height of inverted pyramid." },
+    { code: `    ${h.decl}`, explanation: "Symbol character." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Starts at rows, counts down to 1.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Prints leading spaces for centering.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Prints symbol followed by space.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Moves to next row.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
     { code: '}' }
   ];
 
@@ -295,54 +390,228 @@ function getAst005Code(rows, sp, symbol, lang) {
 function getAst006Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Diamond size." },
-    { code: `${h.decl}`, explanation: "Symbol." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "UPPER PYRAMID.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Stars.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
-    { code: '}', explanation: "End top." },
-    { code: 'for (int i = rows - 1; i >= 1; i--) {', explanation: "LOWER INVERTED PYRAMID.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Stars.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O." },
+    { code: 'int main() {', explanation: "Main." },
+    { code: `    int rows = ${rows};`, explanation: "Diamond size." },
+    { code: `    ${h.decl}`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "UPPER PYRAMID.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Stars.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End top." },
+    { code: '    for (int i = rows - 1; i >= 1; i--) {', explanation: "LOWER INVERTED PYRAMID.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Stars.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End bottom." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, cLines);
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O header." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main." },
+    { code: `    int rows = ${rows};`, explanation: "Diamond size." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "TOP PYRAMID.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Stars.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End top." },
+    { code: '    for (int i = rows - 1; i >= 1; i--) {', explanation: "BOTTOM INVERTED PYRAMID.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Stars.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End bottom." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class DiamondPattern {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Diamond size." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "TOP PYRAMID.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Stars.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End top." },
+    { code: '        for (int i = rows - 1; i >= 1; i--) {', explanation: "BOTTOM PYRAMID.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Stars.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End bottom." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Diamond size." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: 'for i in range(1, rows + 1):', explanation: "TOP PYRAMID.", highlightType: "loop" },
+    { code: '    print(" " * (rows - i) + (symbol + " ") * i)', explanation: "Top row.", highlightType: "output" },
+    { code: 'for i in range(rows - 1, 0, -1):', explanation: "BOTTOM PYRAMID.", highlightType: "loop" },
+    { code: '    print(" " * (rows - i) + (symbol + " ") * i)', explanation: "Bottom row.", highlightType: "output" }
+  ];
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Diamond size." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "TOP PYRAMID.", highlightType: "loop" },
+    { code: '    console.log(" ".repeat(rows - i) + (symbol + " ").repeat(i));', explanation: "Top row." },
+    { code: '}' },
+    { code: 'for (let i = rows - 1; i >= 1; i--) {', explanation: "BOTTOM PYRAMID.", highlightType: "loop" },
+    { code: '    console.log(" ".repeat(rows - i) + (symbol + " ").repeat(i));', explanation: "Bottom row." },
+    { code: '}' }
+  ];
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst007Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Dimension." },
-    { code: `${h.decl}`, explanation: "Border symbol." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '        if (i==1 || i==rows || j==1 || j==rows)', explanation: "Border check.", highlightType: "inner" },
-    { code: '            ' + h.printSym, explanation: "Prints border symbol.", highlightType: "output" },
-    { code: '        else printf("  ");', explanation: "Hollow space.", highlightType: "output" },
-    { code: '    }', explanation: "End inner." },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O." },
+    { code: 'int main() {', explanation: "Main." },
+    { code: `    int rows = ${rows};`, explanation: "Dimension." },
+    { code: `    ${h.decl}`, explanation: "Border symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '            if (i==1 || i==rows || j==1 || j==rows)', explanation: "Border check.", highlightType: "inner" },
+    { code: '                ' + h.printSym, explanation: "Prints border symbol.", highlightType: "output" },
+    { code: '            else printf("  ");', explanation: "Hollow space.", highlightType: "output" },
+    { code: '        }', explanation: "End inner." },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, cLines);
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main." },
+    { code: `    int rows = ${rows};`, explanation: "Dimension." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '            if (i==1 || i==rows || j==1 || j==rows) cout << symbol << " ";', explanation: "Border.", highlightType: "output" },
+    { code: '            else cout << "  ";', explanation: "Inside space.", highlightType: "output" },
+    { code: '        }', explanation: "End inner." },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class HollowSquare {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Dimension." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '                if (i==1 || i==rows || j==1 || j==rows) System.out.print(symbol + " ");', explanation: "Border.", highlightType: "output" },
+    { code: '                else System.out.print("  ");', explanation: "Inside space.", highlightType: "output" },
+    { code: '            }', explanation: "End inner." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Dimension." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    for j in range(1, rows + 1):', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '        if i == 1 or i == rows or j == 1 or j == rows:', explanation: "Border check." },
+    { code: '            print(symbol, end=" ")', explanation: "Border print.", highlightType: "output" },
+    { code: '        else:', explanation: "Space check." },
+    { code: '            print("  ", end="")', explanation: "Hollow space.", highlightType: "output" },
+    { code: '    print()', explanation: "Newline.", highlightType: "output" }
+  ];
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Dimension." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    let line = "";', explanation: "Buffer." },
+    { code: '    for (let j = 1; j <= rows; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '        if (i===1 || i===rows || j===1 || j===rows) line += symbol + " ";', explanation: "Border." },
+    { code: '        else line += "  ";', explanation: "Space." },
+    { code: '    }', explanation: "End inner." },
+    { code: '    console.log(line);', explanation: "Console output." },
+    { code: '}' }
+  ];
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst008Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Height." },
-    { code: `${h.decl}`, explanation: "Boundary symbol." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Centering spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= 2*i - 1; j++) {', explanation: "Width loop.", highlightType: "inner" },
-    { code: '        if (j==1 || j==2*i-1 || i==rows) ' + h.printSym, explanation: "Edge check.", highlightType: "output" },
-    { code: '        else printf(" ");', explanation: "Hollow interior.", highlightType: "output" },
-    { code: '    }', explanation: "End inner." },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O." },
+    { code: 'int main() {', explanation: "Main." },
+    { code: `    int rows = ${rows};`, explanation: "Height." },
+    { code: `    ${h.decl}`, explanation: "Boundary symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Centering spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= 2*i - 1; j++) {', explanation: "Width loop.", highlightType: "inner" },
+    { code: '            if (j==1 || j==2*i-1 || i==rows) ' + h.printSym, explanation: "Edge check.", highlightType: "output" },
+    { code: '            else printf(" ");', explanation: "Hollow interior.", highlightType: "output" },
+    { code: '        }', explanation: "End inner." },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, cLines);
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main." },
+    { code: `    int rows = ${rows};`, explanation: "Height." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= 2*i - 1; j++) {', explanation: "Width loop.", highlightType: "inner" },
+    { code: '            if (j==1 || j==2*i-1 || i==rows) cout << symbol;', explanation: "Edge.", highlightType: "output" },
+    { code: '            else cout << " ";', explanation: "Hollow space.", highlightType: "output" },
+    { code: '        }', explanation: "End width." },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class HollowPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Height." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= 2*i - 1; j++) {', explanation: "Width loop.", highlightType: "inner" },
+    { code: '                if (j==1 || j==2*i-1 || i==rows) System.out.print(symbol);', explanation: "Edge.", highlightType: "output" },
+    { code: '                else System.out.print(" ");', explanation: "Hollow space.", highlightType: "output" },
+    { code: '            }', explanation: "End width." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Height." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    spaces = " " * (rows - i)', explanation: "Spaces." },
+    { code: '    if i == 1 or i == rows:', explanation: "Base/Top check." },
+    { code: '        symbols = (symbol + " ") * i', explanation: "Solid base." },
+    { code: '    else:', explanation: "Hollow interior." },
+    { code: '        symbols = symbol + " " * (2 * (i - 2) + 1) + symbol', explanation: "Edges." },
+    { code: '    print(spaces + symbols)', explanation: "Prints row." }
+  ];
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Height." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    let spaces = " ".repeat(rows - i);', explanation: "Lead spaces." },
+    { code: '    if (i === 1 || i === rows) console.log(spaces + (symbol + " ").repeat(i));', explanation: "Solid." },
+    { code: '    else console.log(spaces + symbol + " ".repeat(2 * (i - 2) + 1) + symbol);', explanation: "Hollow." },
+    { code: '}' }
+  ];
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst009Code(rows, sp, symbol, lang) {
@@ -357,12 +626,16 @@ function getAst011Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
 
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `${h.decl}`, explanation: "Active symbol." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `    ${h.decl}`, explanation: "Active symbol." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
     { code: '}' }
   ];
 
@@ -421,12 +694,16 @@ function getAst012Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang);
 
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Pyramid height." },
-    { code: `${h.decl}`, explanation: "Active symbol." },
-    { code: 'for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements from N down to 1.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Pyramid height." },
+    { code: `    ${h.decl}`, explanation: "Active symbol." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements from N down to 1.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Leading spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= 2 * i - 1; j++) ' + h.printSym.replace(' ', ''), explanation: "Prints (2*i - 1) symbols.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
     { code: '}' }
   ];
 
@@ -485,18 +762,15 @@ function getAst012Code(rows, sp, symbol, lang) {
 
 function getNum001Code(rows, sp, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 1; j <= i; j++) printf("%d ", j);', explanation: "Prints column index j.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) printf("%d ", j);', explanation: "Prints column index j.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
-  ];
-  const pyLines = [
-    { code: `rows = ${rows}`, explanation: "Rows." },
-    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for j in range(1, i + 1):', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '        print(j, end=" ")', explanation: "Prints column index j.", highlightType: "output" },
-    { code: '    print()', explanation: "Newline.", highlightType: "output" }
   ];
   const cppLines = [
     { code: '#include <iostream>', explanation: "I/O stream." },
@@ -521,6 +795,13 @@ function getNum001Code(rows, sp, lang) {
     { code: '    }', explanation: "End main." },
     { code: '}' }
   ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Rows." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    for j in range(1, i + 1):', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '        print(j, end=" ")', explanation: "Prints column index j.", highlightType: "output" },
+    { code: '    print()', explanation: "Newline.", highlightType: "output" }
+  ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
     { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
@@ -534,10 +815,37 @@ function getNum001Code(rows, sp, lang) {
 
 function getNum002Code(rows, sp, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 1; j <= i; j++) printf("%d ", i);', explanation: "Prints row index i.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) printf("%d ", i);', explanation: "Prints row index i.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) cout << i << " ";', explanation: "Prints row index i.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class SameNumberRowPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(i + " ");', explanation: "Prints row index i.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
     { code: '}' }
   ];
   const pyLines = [
@@ -551,17 +859,55 @@ function getNum002Code(rows, sp, lang) {
     { code: '    console.log((i + " ").repeat(i));', explanation: "Prints i repeated.", highlightType: "output" },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, pyLines, jsLines);
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getNum004Code(rows, sp, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: 'int count = 1;', explanation: "Continuous counter.", highlightType: "variable" },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 1; j <= i; j++) printf("%d ", count++);', explanation: "Prints count++.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    int count = 1;', explanation: "Continuous counter.", highlightType: "variable" },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) printf("%d ", count++);', explanation: "Prints count++.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
+  ];
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    int count = 1;', explanation: "Counter." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) cout << count++ << " ";', explanation: "Prints count++.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class FloydsTriangle {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: '        int count = 1;', explanation: "Counter." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print((count++) + " ");', explanation: "Prints count++.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Rows." },
+    { code: 'count = 1', explanation: "Counter." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    for j in range(1, i + 1):', explanation: "INNER LOOP." },
+    { code: '        print(count, end=" ")', explanation: "Prints count." },
+    { code: '        count += 1', explanation: "Increments count." },
+    { code: '    print()', explanation: "Newline." }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
@@ -572,48 +918,191 @@ function getNum004Code(rows, sp, lang) {
     { code: '    console.log(line);', explanation: "Log.", highlightType: "output" },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, jsLines);
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getNum005Code(rows, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Pascal rows." },
-    { code: 'for (int i = 0; i < rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    int val = 1;', explanation: "Base value.", highlightType: "variable" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '    for (int j = 0; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
-    { code: '        printf("%d ", val);', explanation: "Prints Pascal term.", highlightType: "output" },
-    { code: '        val = val * (i - j) / (j + 1);', explanation: "Binomial step.", highlightType: "variable" },
-    { code: '    }', explanation: "End terms." },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Pascal rows." },
+    { code: '    for (int i = 0; i < rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        int val = 1;', explanation: "Base value.", highlightType: "variable" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 0; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '            printf("%d ", val);', explanation: "Prints Pascal term.", highlightType: "output" },
+    { code: '            val = val * (i - j) / (j + 1);', explanation: "Binomial step.", highlightType: "variable" },
+    { code: '        }', explanation: "End terms." },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, cLines);
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Pascal rows." },
+    { code: '    for (int i = 0; i < rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        int val = 1;', explanation: "Base value." },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 0; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '            cout << val << " ";', explanation: "Prints term.", highlightType: "output" },
+    { code: '            val = val * (i - j) / (j + 1);', explanation: "Binomial calculation.", highlightType: "variable" },
+    { code: '        }', explanation: "End terms." },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class PascalsTriangle {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Pascal rows." },
+    { code: '        for (int i = 0; i < rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            int val = 1;', explanation: "Base value." },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 0; j <= i; j++) {', explanation: "INNER LOOP.", highlightType: "inner" },
+    { code: '                System.out.print(val + " ");', explanation: "Prints term.", highlightType: "output" },
+    { code: '                val = val * (i - j) / (j + 1);', explanation: "Binomial step.", highlightType: "variable" },
+    { code: '            }', explanation: "End terms." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Pascal rows." },
+    { code: 'for i in range(rows):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    val = 1', explanation: "Base value." },
+    { code: '    print(" " * (rows - i), end="")', explanation: "Spaces." },
+    { code: '    for j in range(i + 1):', explanation: "INNER LOOP." },
+    { code: '        print(val, end=" ")', explanation: "Prints term." },
+    { code: '        val = val * (i - j) // (j + 1)', explanation: "Binomial calculation." },
+    { code: '    print()', explanation: "Newline." }
+  ];
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Pascal rows." },
+    { code: 'for (let i = 0; i < rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    let val = 1;', explanation: "Base value." },
+    { code: '    let line = " ".repeat(rows - i);', explanation: "Spaces." },
+    { code: '    for (let j = 0; j <= i; j++) {', explanation: "INNER LOOP." },
+    { code: '        line += val + " ";', explanation: "Appends term." },
+    { code: '        val = Math.floor(val * (i - j) / (j + 1));', explanation: "Binomial calculation." },
+    { code: '    }', explanation: "End terms." },
+    { code: '    console.log(line);', explanation: "Console log." },
+    { code: '}' }
+  ];
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getNum006Code(rows, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
-    { code: '    for (int j = 1; j <= i; j++) printf("%d", j);', explanation: "Ascending count.", highlightType: "output" },
-    { code: '    for (int j = i - 1; j >= 1; j--) printf("%d", j);', explanation: "Descending count.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) printf("%d", j);', explanation: "Ascending count.", highlightType: "output" },
+    { code: '        for (int j = i - 1; j >= 1; j--) printf("%d", j);', explanation: "Descending count.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, cLines);
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) cout << j;', explanation: "Ascending count.", highlightType: "output" },
+    { code: '        for (int j = i - 1; j >= 1; j--) cout << j;', explanation: "Descending count.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class PalindromicPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(j);', explanation: "Ascending count.", highlightType: "output" },
+    { code: '            for (int j = i - 1; j >= 1; j--) System.out.print(j);', explanation: "Descending count.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Rows." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    spaces = " " * (rows - i)', explanation: "Lead spaces." },
+    { code: '    asc = "".join(str(j) for j in range(1, i + 1))', explanation: "Ascending numbers." },
+    { code: '    desc = "".join(str(j) for j in range(i - 1, 0, -1))', explanation: "Descending numbers." },
+    { code: '    print(spaces + asc + desc)', explanation: "Prints palindrome line." }
+  ];
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Rows." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    let line = " ".repeat(rows - i);', explanation: "Lead spaces." },
+    { code: '    for (let j = 1; j <= i; j++) line += j;', explanation: "Ascending numbers." },
+    { code: '    for (let j = i - 1; j >= 1; j--) line += j;', explanation: "Descending numbers." },
+    { code: '    console.log(line);', explanation: "Console log." },
+    { code: '}' }
+  ];
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 // --- CHARACTER PATTERNS ---
 
 function getChr001Code(rows, sp, symbol, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: `char startChar = '${symbol}';`, explanation: "Start char." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 0; j < i; j++) printf("%c ", startChar + j);', explanation: "ASCII increment.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 0; j < i; j++) printf("%c ", startChar + j);', explanation: "ASCII increment.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
+  ];
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 0; j < i; j++) cout << (char)(startChar + j) << " ";', explanation: "ASCII increment.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class AlphabetTriangle {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: `        char startChar = '${symbol}';`, explanation: "Start char." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 0; j < i; j++) System.out.print((char)(startChar + j) + " ");', explanation: "Prints char.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Rows." },
+    { code: `start_char = "${symbol}"`, explanation: "Start char." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    line = "".join(chr(ord(start_char) + j) + " " for j in range(i))', explanation: "Constructs line." },
+    { code: '    print(line)', explanation: "Prints line." }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
@@ -626,17 +1115,55 @@ function getChr001Code(rows, sp, symbol, lang) {
     { code: '    console.log(line);', explanation: "Log.", highlightType: "output" },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, jsLines);
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getChr002Code(rows, sp, symbol, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: `char ch = '${symbol}';`, explanation: "Start character." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 1; j <= i; j++) printf("%c ", ch++);', explanation: "Increments char continuously.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    char ch = '${symbol}';`, explanation: "Start character." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) printf("%c ", ch++);', explanation: "Increments char continuously.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
+  ];
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    char ch = '${symbol}';`, explanation: "Start char." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) cout << ch++ << " ";', explanation: "Increments char.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class ContinuousAlphabet {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: `        char ch = '${symbol}';`, explanation: "Start char." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print((ch++) + " ");', explanation: "Increments char.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Rows." },
+    { code: `ch = ord("${symbol}")`, explanation: "Start ASCII." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    for j in range(i):', explanation: "INNER LOOP." },
+    { code: '        print(chr(ch), end=" ")', explanation: "Prints char." },
+    { code: '        ch += 1', explanation: "Increments char." },
+    { code: '    print()', explanation: "Newline." }
   ];
   const jsLines = [
     { code: `const rows = ${rows};`, explanation: "Rows." },
@@ -649,17 +1176,61 @@ function getChr002Code(rows, sp, symbol, lang) {
     { code: '    console.log(line);', explanation: "Console output.", highlightType: "output" },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, jsLines);
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getChr003Code(rows, sp, symbol, lang) {
   const cLines = [
-    { code: `int rows = ${rows};`, explanation: "Rows." },
-    { code: `char startChar = '${symbol}';`, explanation: "Start char." },
-    { code: 'for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
-    { code: '    for (int j = 1; j <= i; j++) printf("%c ", startChar + i - 1);', explanation: "Row letter repeat.", highlightType: "output" },
-    { code: '    printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) printf("%c ", startChar + i - 1);', explanation: "Row letter repeat.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
     { code: '}' }
   ];
-  return renderMultiLang(lang, cLines, cLines, cLines, cLines, cLines);
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: `    char startChar = '${symbol}';`, explanation: "Start char." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) cout << (char)(startChar + i - 1) << " ";', explanation: "Row letter repeat.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+  const javaLines = [
+    { code: 'public class RepeatingCharacterPyramid {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Rows." },
+    { code: `        char startChar = '${symbol}';`, explanation: "Start char." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print((char)(startChar + i - 1) + " ");', explanation: "Row letter repeat.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End outer." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Rows." },
+    { code: `start_char = "${symbol}"`, explanation: "Start char." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    char = chr(ord(start_char) + i - 1)', explanation: "Calculates character for row." },
+    { code: '    print((char + " ") * i)', explanation: "Prints repeated character." }
+  ];
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Rows." },
+    { code: `const startChar = "${symbol}";`, explanation: "Start char." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '    const char = String.fromCharCode(startChar.charCodeAt(0) + i - 1);', explanation: "Row char." },
+    { code: '    console.log((char + " ").repeat(i));', explanation: "Console output." },
+    { code: '}' }
+  ];
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
