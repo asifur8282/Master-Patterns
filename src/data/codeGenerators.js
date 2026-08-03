@@ -227,7 +227,67 @@ function getAst004Code(rows, sp, symbol, lang) {
 }
 
 function getAst005Code(rows, sp, symbol, lang) {
-  return getAst004Code(rows, sp, symbol, lang);
+  const h = getSymbolHelpers(symbol, lang);
+
+  const cLines = [
+    { code: `int rows = ${rows};`, explanation: "Height of inverted pyramid." },
+    { code: `${h.decl}`, explanation: "Symbol character." },
+    { code: 'for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Starts at rows, counts down to 1.", highlightType: "loop" },
+    { code: '    for (int s = 1; s <= rows - i; s++) printf(" ");', explanation: "Prints leading spaces for centering.", highlightType: "inner" },
+    { code: '    for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "Prints symbol followed by space.", highlightType: "output" },
+    { code: '    printf("\\n");', explanation: "Moves to next row.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "Standard I/O library." },
+    { code: 'using namespace std;', explanation: "Use standard namespace." },
+    { code: 'int main() {', explanation: "Main entry point." },
+    { code: `    int rows = ${rows};`, explanation: "Height of inverted pyramid." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Active pattern symbol." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Counts down from rows to 1.", highlightType: "loop" },
+    { code: '        for (int s = 1; s <= rows - i; s++) cout << " ";', explanation: "Prints lead spaces.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) cout << symbol << " ";', explanation: "Prints symbols.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit program." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class InvertedPyramid {', explanation: "Class definition." },
+    { code: '    public static void main(String[] args) {', explanation: "Main execution method." },
+    { code: `        int rows = ${rows};`, explanation: "Total rows." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol to print." },
+    { code: '        for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements row index from N to 1.", highlightType: "loop" },
+    { code: '            for (int s = 1; s <= rows - i; s++) System.out.print(" ");', explanation: "Lead spaces.", highlightType: "inner" },
+    { code: '            for (int j = 1; j <= i; j++) System.out.print(symbol + " ");', explanation: "Prints symbol + space.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Advances to next line.", highlightType: "output" },
+    { code: '        }', explanation: "End outer loop." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Total rows of inverted pyramid." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: 'for i in range(rows, 0, -1):', explanation: "OUTER LOOP: Counts down from rows to 1.", highlightType: "loop" },
+    { code: '    spaces = " " * (rows - i)', explanation: "Calculates lead spaces." },
+    { code: '    symbols = (symbol + " ") * i', explanation: "Repeats symbol i times." },
+    { code: '    print(spaces + symbols)', explanation: "Prints inverted pyramid line.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Total rows." },
+    { code: `const symbol = "${symbol}";`, explanation: "Active symbol." },
+    { code: 'for (let i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Counts down from rows to 1.", highlightType: "loop" },
+    { code: '    let spaces = " ".repeat(rows - i);', explanation: "Leading spaces for centering." },
+    { code: '    let symbols = (symbol + " ").repeat(i);', explanation: "Repeats symbol i times.", highlightType: "output" },
+    { code: '    console.log(spaces + symbols);', explanation: "Outputs line to console.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
 
 function getAst006Code(rows, sp, symbol, lang) {
