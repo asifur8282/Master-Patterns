@@ -623,8 +623,101 @@ function getAst008Code(rows, sp, symbol, lang) {
 }
 
 function getAst009Code(rows, sp, symbol, lang) {
-  return getAst006Code(rows, sp, symbol, lang);
+  const h = getSymbolHelpers(symbol, lang, sp);
+
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Hourglass height." },
+    { code: `    char symbol = '${symbol}';`, explanation: "Symbol." },
+    { code: '    // Top: inverted pyramid (wide to narrow)', explanation: "Upper hourglass half." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "UPPER LOOP: rows → 1 (inverted).", highlightType: "loop" },
+    { code: `        for (int s = 1; s <= rows - i; s++) printf("${h.halfSpaces}");`, explanation: "Centering spaces increase as rows shrink.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "i symbols per row — shrinks each row.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End upper loop." },
+    { code: '    // Bottom: upright pyramid (narrow to wide)', explanation: "Lower hourglass half (starts from 2 to skip shared apex)." },
+    { code: '    for (int i = 2; i <= rows; i++) {', explanation: "LOWER LOOP: 2 → rows (upright). Starts at 2 to skip shared apex.", highlightType: "loop" },
+    { code: `        for (int s = 1; s <= rows - i; s++) printf("${h.halfSpaces}");`, explanation: "Centering spaces decrease as rows grow.", highlightType: "inner" },
+    { code: '        for (int j = 1; j <= i; j++) ' + h.printSym, explanation: "i symbols per row — grows each row.", highlightType: "output" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End lower loop." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Hourglass height." },
+    { code: `    string symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '    // Top: inverted pyramid', explanation: "Upper half." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "UPPER LOOP: rows → 1.", highlightType: "loop" },
+    { code: `        for (int s = 1; s <= rows - i; s++) cout << "${h.halfSpaces}";`, explanation: "Centering spaces.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "i symbols, shrinking.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End upper." },
+    { code: '    // Bottom: upright pyramid', explanation: "Lower half." },
+    { code: '    for (int i = 2; i <= rows; i++) {', explanation: "LOWER LOOP: 2 → rows (skips shared apex).", highlightType: "loop" },
+    { code: `        for (int s = 1; s <= rows - i; s++) cout << "${h.halfSpaces}";`, explanation: "Centering spaces.", highlightType: "inner" },
+    { code: `        for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "i symbols, growing.", highlightType: "output" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End lower." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class HourglassPattern {', explanation: "Class." },
+    { code: '    public static void main(String[] args) {', explanation: "Main." },
+    { code: `        int rows = ${rows};`, explanation: "Hourglass height." },
+    { code: `        String symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '        // Top: inverted pyramid', explanation: "Upper half." },
+    { code: '        for (int i = rows; i >= 1; i--) {', explanation: "UPPER LOOP: rows → 1.", highlightType: "loop" },
+    { code: `            for (int s = 1; s <= rows - i; s++) System.out.print("${h.halfSpaces}");`, explanation: "Centering spaces.", highlightType: "inner" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "i symbols, shrinking.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End upper." },
+    { code: '        // Bottom: upright pyramid', explanation: "Lower half." },
+    { code: '        for (int i = 2; i <= rows; i++) {', explanation: "LOWER LOOP: 2 → rows (skips shared apex).", highlightType: "loop" },
+    { code: `            for (int s = 1; s <= rows - i; s++) System.out.print("${h.halfSpaces}");`, explanation: "Centering spaces.", highlightType: "inner" },
+    { code: `            for (int j = 1; j <= i; j++) ${h.printSym}`, explanation: "i symbols, growing.", highlightType: "output" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End lower." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Hourglass height." },
+    { code: `symbol = "${symbol}"`, explanation: "Symbol." },
+    { code: '# Top: inverted pyramid (wide to narrow)', explanation: "Upper half." },
+    { code: 'for i in range(rows, 0, -1):', explanation: "UPPER LOOP: rows → 1.", highlightType: "loop" },
+    { code: `    print("${h.halfSpaces}" * (rows - i) + (symbol + "${h.spaces}") * i)`, explanation: "Centering + i symbols (shrinking).", highlightType: "output" },
+    { code: '# Bottom: upright pyramid (narrow to wide)', explanation: "Lower half." },
+    { code: 'for i in range(2, rows + 1):', explanation: "LOWER LOOP: 2 → rows (skips shared apex).", highlightType: "loop" },
+    { code: `    print("${h.halfSpaces}" * (rows - i) + (symbol + "${h.spaces}") * i)`, explanation: "Centering + i symbols (growing).", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Hourglass height." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: '// Top: inverted pyramid (wide to narrow)', explanation: "Upper half." },
+    { code: 'for (let i = rows; i >= 1; i--) {', explanation: "UPPER LOOP: rows → 1.", highlightType: "loop" },
+    { code: `    const spaces = "${h.halfSpaces}".repeat(rows - i);`, explanation: "Centering spaces." },
+    { code: `    console.log(spaces + (symbol + "${h.spaces}").repeat(i));`, explanation: "i symbols shrinking per row.", highlightType: "output" },
+    { code: '}' },
+    { code: '// Bottom: upright pyramid (narrow to wide)', explanation: "Lower half." },
+    { code: 'for (let i = 2; i <= rows; i++) {', explanation: "LOWER LOOP: 2 → rows (skips shared apex).", highlightType: "loop" },
+    { code: `    const spaces = "${h.halfSpaces}".repeat(rows - i);`, explanation: "Centering spaces." },
+    { code: `    console.log(spaces + (symbol + "${h.spaces}").repeat(i));`, explanation: "i symbols growing per row.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
+
 
 function getAst010Code(rows, sp, symbol, lang) {
   const h = getSymbolHelpers(symbol, lang, sp);
