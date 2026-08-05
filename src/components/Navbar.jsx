@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, BookOpen, Layers, MessageSquareWarning } from 'lucide-react';
+import { Sun, Moon, BookOpen, Layers, MessageSquareWarning, MapPin } from 'lucide-react';
 
 export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
   return (
@@ -29,6 +29,15 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
         </button>
 
         <button 
+          className={`btn ${activeView === 'sitemap' ? 'btn-primary' : ''}`}
+          onClick={() => setActiveView('sitemap')}
+          title="Platform Sitemap & Architecture"
+        >
+          <MapPin size={16} />
+          <span className="nav-btn-text">Sitemap</span>
+        </button>
+
+        <button 
           className={`btn ${activeView === 'report' ? 'btn-primary' : ''}`}
           onClick={() => setActiveView('report')}
           title="Report an Error or Feedback"
@@ -48,4 +57,5 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
     </header>
   );
 }
+
 

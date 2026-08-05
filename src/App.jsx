@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { PatternGallery } from './components/PatternGallery';
 import { PatternLab } from './components/PatternLab';
 import { ReportForm } from './components/ReportForm';
+import { SitemapPage } from './components/SitemapPage';
 import { PATTERNS } from './data/patterns';
 
 export function App() {
@@ -13,10 +14,13 @@ export function App() {
     if (path === '/report' || path === '/report/') {
       return 'report';
     }
+    if (path === '/sitemap' || path === '/sitemap/') {
+      return 'sitemap';
+    }
     return 'gallery';
   };
 
-  const [activeView, setActiveView] = useState(getInitialView); // 'gallery' | 'lab' | 'report'
+  const [activeView, setActiveView] = useState(getInitialView); // 'gallery' | 'lab' | 'report' | 'sitemap'
   const [selectedPattern, setSelectedPattern] = useState(PATTERNS[0]);
   const [reportPattern, setReportPattern] = useState(null);
   const [theme, setTheme] = useState('dark');
@@ -31,18 +35,20 @@ export function App() {
       const path = window.location.pathname;
       if (path === '/report' || path === '/report/') {
         setActiveView('report');
-      } else if (activeView === 'report') {
+      } else if (path === '/sitemap' || path === '/sitemap/') {
+        setActiveView('sitemap');
+      } else {
         setActiveView('gallery');
       }
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [activeView]);
+  }, []);
 
   const handleNavigate = (view) => {
     setActiveView(view);
-    const targetPath = view === 'report' ? '/report' : '/';
+    const targetPath = view === 'report' ? '/report' : view === 'sitemap' ? '/sitemap' : '/';
     if (window.location.pathname !== targetPath) {
       window.history.pushState({}, '', targetPath);
     }
@@ -95,6 +101,12 @@ export function App() {
             onBack={() => handleNavigate('gallery')}
           />
         )}
+
+        {activeView === 'sitemap' && (
+          <SitemapPage
+            onNavigate={handleNavigate}
+          />
+        )}
       </main>
 
       <footer style={{
@@ -126,12 +138,19 @@ export function App() {
           Master Patterns - Modern CS Pattern Learning Platform & Visualizer
         </p>
 
-        <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem' }}>
+        <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           <button 
             onClick={() => handleNavigate('gallery')}
             style={{ background: 'none', border: 'none', color: 'var(--accent-indigo)', cursor: 'pointer', textDecoration: 'underline' }}
           >
             Catalog
+          </button>
+          <span>•</span>
+          <button 
+            onClick={() => handleNavigate('sitemap')}
+            style={{ background: 'none', border: 'none', color: 'var(--accent-indigo)', cursor: 'pointer', textDecoration: 'underline' }}
+          >
+            Sitemap
           </button>
           <span>•</span>
           <button 
@@ -147,5 +166,6 @@ export function App() {
 }
 
 export default App;
+
 
 
