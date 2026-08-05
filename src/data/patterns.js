@@ -811,22 +811,22 @@ export const PATTERNS = [
     defaultSymbol: "*",
     isSymbolCustomizable: true,
     generateOutput: (rows, spacePadding = 1, symbol = "*") => {
-      const { sp, halfUnit } = getUnitConfig(symbol, spacePadding);
+      const { sp, unitWidth } = getUnitConfig(symbol, spacePadding);
       const r = Math.max(6, rows);
       let res = [];
       
       // Upper part (two lobes)
       for (let i = Math.floor(r / 2); i <= r; i += 2) {
-        const leftSpaces = " ".repeat(Math.floor((r - i) / 2) * halfUnit);
+        const leftSpaces = " ".repeat(Math.floor((r - i - 1) / 2) * unitWidth);
         const lobe1 = (symbol + sp).repeat(i);
-        const midSpaces = " ".repeat((r - i) * halfUnit);
+        const midSpaces = " ".repeat((r - i) * unitWidth);
         const lobe2 = (symbol + sp).repeat(i).trimEnd();
         res.push(leftSpaces + lobe1 + midSpaces + lobe2);
       }
       
       // Lower part (inverted triangle)
       for (let i = r; i >= 1; i--) {
-        const leftSpaces = " ".repeat((r - i) * halfUnit);
+        const leftSpaces = " ".repeat((r - i) * unitWidth);
         const symbols = (symbol + sp).repeat(2 * i - 1).trimEnd();
         res.push(leftSpaces + symbols);
       }
@@ -834,7 +834,7 @@ export const PATTERNS = [
       return res.join("\n");
     },
     getStepByStepData: (rows, spacePadding = 1, symbol = "*") => {
-      const { sp, halfUnit } = getUnitConfig(symbol, spacePadding);
+      const { sp, unitWidth } = getUnitConfig(symbol, spacePadding);
       const r = Math.max(6, rows);
       const steps = [];
       let currentOutput = [];
@@ -842,9 +842,9 @@ export const PATTERNS = [
       
       // Upper part (two lobes)
       for (let i = Math.floor(r / 2); i <= r; i += 2) {
-        const leftSpaces = " ".repeat(Math.floor((r - i) / 2) * halfUnit);
+        const leftSpaces = " ".repeat(Math.floor((r - i - 1) / 2) * unitWidth);
         const lobe1 = (symbol + sp).repeat(i);
-        const midSpaces = " ".repeat((r - i) * halfUnit);
+        const midSpaces = " ".repeat((r - i) * unitWidth);
         const lobe2 = (symbol + sp).repeat(i).trimEnd();
         const line = leftSpaces + lobe1 + midSpaces + lobe2;
         currentOutput.push(line);
@@ -859,7 +859,7 @@ export const PATTERNS = [
       
       // Lower part (inverted triangle)
       for (let i = r; i >= 1; i--) {
-        const leftSpaces = " ".repeat((r - i) * halfUnit);
+        const leftSpaces = " ".repeat((r - i) * unitWidth);
         const symbols = (symbol + sp).repeat(2 * i - 1).trimEnd();
         const line = leftSpaces + symbols;
         currentOutput.push(line);
