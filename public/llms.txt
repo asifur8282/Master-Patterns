@@ -1,0 +1,35 @@
+# Master Patterns
+
+> Master Patterns is a modern Computer Science (CS) Pattern Learning Platform & Visualizer. It provides interactive step-by-step visual tracing and multi-language code generation (C, C++, Java, Python, JavaScript) for classic and advanced matrix/symbol pattern programs.
+
+Website: https://master-patterns.vercel.app/
+Developer: Asifur Rahaman (https://asifur-rahaman-portfolio.vercel.app/)
+
+## Core Routes & Applications
+
+- [Catalog](https://master-patterns.vercel.app/): Interactive catalog of CS pattern programs with category filters, difficulty tags, and live output previews.
+- [Report an Error / Feedback](https://master-patterns.vercel.app/report): Web3Forms-integrated error reporting tool for reporting code syntax errors, rendering issues, or sending feedback.
+- [Sitemap](https://master-patterns.vercel.app/sitemap): Descriptive platform index, pattern categorization matrix, and architecture specifications.
+
+## Pattern Categories
+
+- **Star Patterns**: Classic right-angled pyramids, inverted triangles, diamonds, hourglasses, and hollow stars.
+- **Number Patterns**: Incrementing pyramids, Pascal's triangle, Floyd's triangle, palindromic number pyramids, and binary alternating matrices.
+- **Character / Alphabet Patterns**: Repeated letter pyramids, A-Z sequence grids, and palindromic letter diamonds.
+- **Pyramid & Diamond Patterns**: Centered symmetrical pyramids, hollow diamonds, and nested polygon frames.
+- **Advanced Matrix Patterns**: Spiral matrices, concentric number squares, snake patterns, and checkerboard grids.
+
+## Code Generators Supported
+
+Master Patterns generates production-grade, formatted source code with configurable loop variables, space padding, and row parameters across 5 languages:
+- **C** (`stdio.h`)
+- **C++** (`<iostream>`)
+- **Java** (`System.out.print`)
+- **Python** (`print()`)
+- **JavaScript** (`console.log`)
+
+## Technical Specifications
+
+- **Frontend Stack**: React 19, Vite 8, Vanilla CSS Design System with dark and hazy bluish-pink light mode themes.
+- **Routing**: Client-side HTML5 History API routing with Vercel single-page app rewrites.
+- **Form Submissions**: Web3Forms API endpoint integration (`api.web3forms.com`).

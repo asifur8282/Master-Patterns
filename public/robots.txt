@@ -2,3 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://master-patterns.vercel.app/sitemap.xml
+# LLM Context File
+# https://master-patterns.vercel.app/llms.txt
+
