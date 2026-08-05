@@ -28,18 +28,19 @@ export function ReportForm({ initialPattern, onBack }) {
   const [submitStatus, setSubmitStatus] = useState('idle'); // 'idle' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Determine active pattern name
-  const activePatternName = selectedPattern === 'custom' 
+  // Determine active pattern name and code ID
+  const foundPattern = PATTERNS.find(p => p.name === selectedPattern);
+  const activePatternDisplay = selectedPattern === 'custom' 
     ? (customPattern.trim() || 'Custom Pattern') 
-    : selectedPattern;
+    : (foundPattern ? `${foundPattern.name} (${foundPattern.id})` : selectedPattern);
 
   // Auto-generated subject for Web3Forms
   const getComputedSubject = () => {
     if (feedbackType === 'code_error') {
-      return `Code Error for ${activePatternName}`;
+      return `Code Error for ${activePatternDisplay}`;
     }
     if (feedbackType === 'pattern_broken') {
-      return `Pattern Not Working for ${activePatternName}`;
+      return `Pattern Not Working for ${activePatternDisplay}`;
     }
     return subject.trim() || 'General Feedback for Master Patterns';
   };
@@ -67,7 +68,7 @@ export function ReportForm({ initialPattern, onBack }) {
     );
 
     if (feedbackType !== 'general_feedback') {
-      formData.append('pattern_name_code', activePatternName);
+      formData.append('pattern_name_code', activePatternDisplay);
     }
     formData.append('message', description);
 
@@ -313,7 +314,7 @@ export function ReportForm({ initialPattern, onBack }) {
             <div className="auto-subject-preview">
               <HelpCircle size={16} />
               <span>
-                <strong>Automated Web3Forms Subject:</strong> {getComputedSubject()}
+                <strong>Subject:</strong> {getComputedSubject()}
               </span>
             </div>
           )}
