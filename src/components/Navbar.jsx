@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, BookOpen, Layers } from 'lucide-react';
+import { Sun, Moon, BookOpen, Layers, MessageSquareWarning } from 'lucide-react';
 
 export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
   return (
@@ -29,6 +29,15 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
         </button>
 
         <button 
+          className={`btn ${activeView === 'report' ? 'btn-primary' : ''}`}
+          onClick={() => setActiveView('report')}
+          title="Report an Error or Feedback"
+        >
+          <MessageSquareWarning size={16} />
+          <span className="nav-btn-text">Report / Feedback</span>
+        </button>
+
+        <button 
           className="btn btn-icon"
           onClick={toggleTheme}
           title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
@@ -39,3 +48,4 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
     </header>
   );
 }
+

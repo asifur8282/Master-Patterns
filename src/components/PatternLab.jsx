@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Flag } from 'lucide-react';
 import { PatternControls } from './PatternControls';
 import { PatternOutput } from './PatternOutput';
 import { CodeViewer } from './CodeViewer';
 import { StepVisualizer } from './StepVisualizer';
 
-export function PatternLab({ pattern, onBack }) {
+export function PatternLab({ pattern, onBack, onRequestReport }) {
   const [rows, setRows] = useState(pattern.defaultRows || 5);
   const [spacePadding, setSpacePadding] = useState(pattern.defaultSpaces || 1);
   const [symbol, setSymbol] = useState(pattern.defaultSymbol || '*');
@@ -26,10 +26,24 @@ export function PatternLab({ pattern, onBack }) {
     <div className="lab-container">
       {/* Navigation & Header with Flex Wrap to Prevent Overflow */}
       <div className="lab-header">
-        <button className="btn btn-sm" onClick={onBack}>
-          <ArrowLeft size={16} />
-          Back to Pattern Catalog
-        </button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button className="btn btn-sm" onClick={onBack}>
+            <ArrowLeft size={16} />
+            Back to Pattern Catalog
+          </button>
+          
+          {onRequestReport && (
+            <button 
+              className="btn btn-sm"
+              onClick={() => onRequestReport(pattern)}
+              style={{ background: 'rgba(239, 68, 68, 0.12)', color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+              title="Report an error or broken pattern"
+            >
+              <Flag size={14} />
+              Report Issue
+            </button>
+          )}
+        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', maxWidth: '100%', minWidth: 0 }}>
           <span className="badge badge-indigo">{pattern.id}</span>
@@ -37,6 +51,7 @@ export function PatternLab({ pattern, onBack }) {
           <span className="badge badge-cyan">{pattern.category}</span>
         </div>
       </div>
+
 
       <p style={{ color: 'var(--text-secondary)', marginBottom: '20px', fontSize: '0.95rem', wordBreak: 'break-word' }}>
         {pattern.description}
