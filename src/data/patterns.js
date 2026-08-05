@@ -799,5 +799,80 @@ export const PATTERNS = [
       }
       return steps;
     }
+  },
+  {
+    id: "ast_013",
+    name: "Heart Shape Pattern",
+    category: "Advanced",
+    difficulty: "Hard",
+    description: "Draws a beautiful heart shape using nested loops. Demonstrates math-to-loop centering, lobe branching, and custom spacing.",
+    defaultRows: 6,
+    defaultSpaces: 1,
+    defaultSymbol: "*",
+    isSymbolCustomizable: true,
+    generateOutput: (rows, spacePadding = 1, symbol = "*") => {
+      const { sp, halfUnit } = getUnitConfig(symbol, spacePadding);
+      const r = Math.max(6, rows);
+      let res = [];
+      
+      // Upper part (two lobes)
+      for (let i = Math.floor(r / 2); i <= r; i += 2) {
+        const leftSpaces = " ".repeat(Math.floor((r - i) / 2) * halfUnit);
+        const lobe1 = (symbol + sp).repeat(i);
+        const midSpaces = " ".repeat((r - i) * halfUnit);
+        const lobe2 = (symbol + sp).repeat(i).trimEnd();
+        res.push(leftSpaces + lobe1 + midSpaces + lobe2);
+      }
+      
+      // Lower part (inverted triangle)
+      for (let i = r; i >= 1; i--) {
+        const leftSpaces = " ".repeat((r - i) * halfUnit);
+        const symbols = (symbol + sp).repeat(2 * i - 1).trimEnd();
+        res.push(leftSpaces + symbols);
+      }
+      
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 1, symbol = "*") => {
+      const { sp, halfUnit } = getUnitConfig(symbol, spacePadding);
+      const r = Math.max(6, rows);
+      const steps = [];
+      let currentOutput = [];
+      let stepCount = 1;
+      
+      // Upper part (two lobes)
+      for (let i = Math.floor(r / 2); i <= r; i += 2) {
+        const leftSpaces = " ".repeat(Math.floor((r - i) / 2) * halfUnit);
+        const lobe1 = (symbol + sp).repeat(i);
+        const midSpaces = " ".repeat((r - i) * halfUnit);
+        const lobe2 = (symbol + sp).repeat(i).trimEnd();
+        const line = leftSpaces + lobe1 + midSpaces + lobe2;
+        currentOutput.push(line);
+        steps.push({
+          step: stepCount++,
+          row: stepCount - 1,
+          lineAdded: line,
+          explanation: `Upper row: Print double lobes of width ${i} with center spaces.`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      
+      // Lower part (inverted triangle)
+      for (let i = r; i >= 1; i--) {
+        const leftSpaces = " ".repeat((r - i) * halfUnit);
+        const symbols = (symbol + sp).repeat(2 * i - 1).trimEnd();
+        const line = leftSpaces + symbols;
+        currentOutput.push(line);
+        steps.push({
+          step: stepCount++,
+          row: stepCount - 1,
+          lineAdded: line,
+          explanation: `Lower row: Centered inverted triangle width ${2 * i - 1}.`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      
+      return steps;
+    }
   }
 ];

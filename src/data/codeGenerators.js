@@ -18,6 +18,7 @@ export function generateCode(patternId, rows = 5, spacePadding = 1, symbol = "*"
     case "ast_010": return getAst010Code(rows, spacePadding, cleanSymbol, lang);
     case "ast_011": return getAst011Code(rows, spacePadding, cleanSymbol, lang);
     case "ast_012": return getAst012Code(rows, spacePadding, cleanSymbol, lang);
+    case "ast_013": return getAst013Code(rows, spacePadding, cleanSymbol, lang);
 
     case "num_001": return getNum001Code(rows, spacePadding, lang);
     case "num_002": return getNum002Code(rows, spacePadding, lang);
@@ -1464,5 +1465,160 @@ function getChr003Code(rows, sp, symbol, lang) {
     { code: `    console.log((char + "${spaces}").repeat(i));`, explanation: "Console output with dynamic spacing." },
     { code: '}' }
   ];
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
+}
+
+function getAst013Code(rows, sp, symbol, lang) {
+  const h = getSymbolHelpers(symbol, lang, sp);
+  const r = Math.max(6, rows);
+
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${r};`, explanation: "Height of the heart." },
+    { code: `    ${h.decl}`, explanation: "Symbol character." },
+    { code: '    // Upper part of the heart (two lobes)', explanation: "Draw humps." },
+    { code: '    for (int i = rows / 2; i <= rows; i += 2) {', explanation: "OUTER LOOP: Upper lobes row iterator.", highlightType: "loop" },
+    { code: '        // Print left spacing', explanation: "Spaces before the first lobe." },
+    { code: '        for (int j = 1; j < rows - i; j += 2) {', explanation: "INNER LOOP: Left side spacing.", highlightType: "inner" },
+    { code: `            printf("${h.halfSpaces}");`, explanation: "Output spacer." },
+    { code: '        }', explanation: "End left spacing." },
+    { code: '        // Print first lobe', explanation: "Symbols for left lobe." },
+    { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Left lobe symbols.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Output symbol." },
+    { code: '        }', explanation: "End first lobe." },
+    { code: '        // Print middle spacing', explanation: "Spaces between lobes." },
+    { code: '        for (int j = 1; j <= rows - i; j++) {', explanation: "INNER LOOP: Center spacing.", highlightType: "inner" },
+    { code: `            printf("${h.halfSpaces}");`, explanation: "Output spacer." },
+    { code: '        }', explanation: "End middle spacing." },
+    { code: '        // Print second lobe', explanation: "Symbols for right lobe." },
+    { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Right lobe symbols.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Output symbol." },
+    { code: '        }', explanation: "End second lobe." },
+    { code: '        printf("\\n");', explanation: "Newline after row." },
+    { code: '    }', explanation: "End upper part." },
+    { code: '    // Lower part of the heart (inverted triangle)', explanation: "Draw V-shape." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Inverted triangle rows.", highlightType: "loop" },
+    { code: '        // Print leading spaces', explanation: "Indentation for centering." },
+    { code: '        for (int j = i; j < rows; j++) {', explanation: "INNER LOOP: Leading spaces.", highlightType: "inner" },
+    { code: `            printf("${h.halfSpaces}");`, explanation: "Output spacer." },
+    { code: '        }', explanation: "End spaces." },
+    { code: '        // Print symbols', explanation: "Symbols for current row." },
+    { code: '        for (int j = 1; j <= (i * 2) - 1; j++) {', explanation: "INNER LOOP: Heart body symbols.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Output symbol." },
+    { code: '        }', explanation: "End symbols." },
+    { code: '        printf("\\n");', explanation: "Newline." },
+    { code: '    }', explanation: "End lower part." },
+    { code: '    return 0;', explanation: "Exit program." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "Standard I/O stream." },
+    { code: 'using namespace std;', explanation: "Standard namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${r};`, explanation: "Heart height." },
+    { code: `    ${h.decl}`, explanation: "Active symbol." },
+    { code: '    // Upper part (two lobes)', explanation: "Draw humps." },
+    { code: '    for (int i = rows / 2; i <= rows; i += 2) {', explanation: "OUTER LOOP: Upper lobes.", highlightType: "loop" },
+    { code: '        for (int j = 1; j < rows - i; j += 2) {', explanation: "INNER LOOP: Left indentation.", highlightType: "inner" },
+    { code: `            cout << "${h.halfSpaces}";`, explanation: "Prints spacer." },
+    { code: '        }', explanation: "End spacing." },
+    { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Left lobe.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Prints symbol." },
+    { code: '        }', explanation: "End lobe." },
+    { code: '        for (int j = 1; j <= rows - i; j++) {', explanation: "INNER LOOP: Center spacing.", highlightType: "inner" },
+    { code: `            cout << "${h.halfSpaces}";`, explanation: "Prints center spacer." },
+    { code: '        }', explanation: "End middle spacing." },
+    { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Right lobe.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Prints symbol." },
+    { code: '        }', explanation: "End lobe." },
+    { code: '        cout << endl;', explanation: "Newline." },
+    { code: '    }', explanation: "End upper part." },
+    { code: '    // Lower part (inverted triangle)', explanation: "Draw V-shape." },
+    { code: '    for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Decrements rows.", highlightType: "loop" },
+    { code: '        for (int j = i; j < rows; j++) {', explanation: "INNER LOOP: Centering spaces.", highlightType: "inner" },
+    { code: `            cout << "${h.halfSpaces}";`, explanation: "Prints spacer." },
+    { code: '        }', explanation: "End spaces." },
+    { code: '        for (int j = 1; j <= (i * 2) - 1; j++) {', explanation: "INNER LOOP: Row symbols.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Prints symbol." },
+    { code: '        }', explanation: "End symbols." },
+    { code: '        cout << endl;', explanation: "Newline." },
+    { code: '    }', explanation: "End lower part." },
+    { code: '    return 0;', explanation: "Exit program." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class HeartPattern {', explanation: "Class definition." },
+    { code: '    public static void main(String[] args) {', explanation: "Main entry method." },
+    { code: `        int rows = ${r};`, explanation: "Height." },
+    { code: `        ${h.decl}`, explanation: "Symbol variable." },
+    { code: '        // Upper part (two lobes)', explanation: "Draw humps." },
+    { code: '        for (int i = rows / 2; i <= rows; i += 2) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = 1; j < rows - i; j += 2) {', explanation: "INNER LOOP: Left spacing.", highlightType: "inner" },
+    { code: `                System.out.print("${h.halfSpaces}");`, explanation: "Spacer." },
+    { code: '            }', explanation: "End spacing." },
+    { code: '            for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Left lobe.", highlightType: "inner" },
+    { code: `                ${h.printSym}`, explanation: "Symbol print." },
+    { code: '            }', explanation: "End lobe." },
+    { code: '            for (int j = 1; j <= rows - i; j++) {', explanation: "INNER LOOP: Center spacing.", highlightType: "inner" },
+    { code: `                System.out.print("${h.halfSpaces}");`, explanation: "Spacer." },
+    { code: '            }', explanation: "End middle spacing." },
+    { code: '            for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Right lobe.", highlightType: "inner" },
+    { code: `                ${h.printSym}`, explanation: "Symbol print." },
+    { code: '            }', explanation: "End lobe." },
+    { code: '            System.out.println();', explanation: "Newline." },
+    { code: '        }', explanation: "End upper part." },
+    { code: '        // Lower part (inverted triangle)', explanation: "Draw V-shape." },
+    { code: '        for (int i = rows; i >= 1; i--) {', explanation: "OUTER LOOP.", highlightType: "loop" },
+    { code: '            for (int j = i; j < rows; j++) {', explanation: "INNER LOOP: Centering spaces.", highlightType: "inner" },
+    { code: `                System.out.print("${h.halfSpaces}");`, explanation: "Spacer." },
+    { code: '            }', explanation: "End spaces." },
+    { code: '            for (int j = 1; j <= (i * 2) - 1; j++) {', explanation: "INNER LOOP: Row symbols.", highlightType: "inner" },
+    { code: `                ${h.printSym}`, explanation: "Symbol print." },
+    { code: '            }', explanation: "End symbols." },
+    { code: '            System.out.println();', explanation: "Newline." },
+    { code: '        }', explanation: "End lower part." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${r}`, explanation: "Heart height." },
+    { code: `symbol = "${symbol}"`, explanation: "Selected symbol." },
+    { code: 'print("Upper part (two lobes)")', explanation: "Humps comment." },
+    { code: 'for i in range(rows // 2, rows + 1, 2):', explanation: "OUTER LOOP: Upper lobes.", highlightType: "loop" },
+    { code: `    left_spaces = "${h.halfSpaces}" * ((rows - i) // 2)`, explanation: "Calculate left spacer." },
+    { code: `    lobe1 = (symbol + "${h.spaces}") * i`, explanation: "Left lobe." },
+    { code: `    mid_spaces = "${h.halfSpaces}" * (rows - i)`, explanation: "Center spacer." },
+    { code: `    lobe2 = ((symbol + "${h.spaces}") * i).rstrip()`, explanation: "Right lobe without trailing spacer." },
+    { code: '    print(left_spaces + lobe1 + mid_spaces + lobe2)', explanation: "Outputs lobes row.", highlightType: "output" },
+    { code: 'print("Lower part (inverted triangle)")', explanation: "V-shape comment." },
+    { code: 'for i in range(rows, 0, -1):', explanation: "OUTER LOOP: Lower inverted triangle.", highlightType: "loop" },
+    { code: `    spaces = "${h.halfSpaces}" * (rows - i)`, explanation: "Centering spacer." },
+    { code: `    symbols = ((symbol + "${h.spaces}") * ((i * 2) - 1)).rstrip()`, explanation: "Row symbols.", highlightType: "output" },
+    { code: '    print(spaces + symbols)', explanation: "Outputs lower row." }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${r};`, explanation: "Height." },
+    { code: `const symbol = "${symbol}";`, explanation: "Symbol." },
+    { code: 'console.log("Upper part (two lobes)");', explanation: "Humps comment." },
+    { code: 'for (let i = Math.floor(rows / 2); i <= rows; i += 2) {', explanation: "OUTER LOOP: Upper lobes.", highlightType: "loop" },
+    { code: `    const leftSpaces = "${h.halfSpaces}".repeat(Math.floor((rows - i) / 2));`, explanation: "Left spacing." },
+    { code: `    const lobe1 = (symbol + "${h.spaces}").repeat(i);`, explanation: "Left lobe." },
+    { code: `    const midSpaces = "${h.halfSpaces}".repeat(rows - i);`, explanation: "Center spacing." },
+    { code: `    const lobe2 = (symbol + "${h.spaces}").repeat(i).trimEnd();`, explanation: "Right lobe." },
+    { code: '    console.log(leftSpaces + lobe1 + midSpaces + lobe2);', explanation: "Outputs upper row.", highlightType: "output" },
+    { code: '}' },
+    { code: 'console.log("Lower part (inverted triangle)");', explanation: "V-shape comment." },
+    { code: 'for (let i = rows; i >= 1; i--) {', explanation: "OUTER LOOP: Lower part.", highlightType: "loop" },
+    { code: `    const leftSpaces = "${h.halfSpaces}".repeat(rows - i);`, explanation: "Centering spaces." },
+    { code: `    const symbols = (symbol + "${h.spaces}").repeat(2 * i - 1).trimEnd();`, explanation: "Row symbols." },
+    { code: '    console.log(leftSpaces + symbols);', explanation: "Outputs lower row.", highlightType: "output" },
+    { code: '}' }
+  ];
+
   return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
 }
