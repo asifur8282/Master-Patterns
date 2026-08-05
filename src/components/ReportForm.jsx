@@ -50,7 +50,7 @@ export function ReportForm({ initialPattern, onBack }) {
     setIsSubmitting(true);
     setErrorMessage('');
 
-    const apiKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY";
+    const apiKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "423b6778-3838-4f71-9e15-657e5776757b";
     const finalSubject = getComputedSubject();
 
     const formData = new FormData();
