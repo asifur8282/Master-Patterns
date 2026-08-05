@@ -38,14 +38,20 @@
 }
 
 [data-theme="light"] {
-  /* Warm Eye-Calming Light Theme (Warm Cream & Soft Parchment Tones) */
-  --bg-primary: #f6f3eb;
-  --bg-secondary: #eee9dc;
-  --bg-card: #fdfbf7;
-  --bg-card-hover: #e8e2d4;
-  --bg-input: #eee9dc;
-  --border-color: #d8cfbe;
-  --border-glow: rgba(217, 119, 6, 0.25);
+  /* Warm Hazy Multi-Color Light Theme */
+  --bg-primary: #f8f4ec;
+  --bg-hazy-gradient: 
+    radial-gradient(at 0% 0%, rgba(254, 215, 170, 0.6) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(253, 186, 116, 0.5) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(244, 114, 182, 0.35) 0px, transparent 55%),
+    radial-gradient(at 0% 100%, rgba(253, 230, 138, 0.55) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(251, 146, 60, 0.22) 0px, transparent 65%);
+  --bg-secondary: rgba(240, 234, 222, 0.85);
+  --bg-card: rgba(253, 251, 247, 0.82);
+  --bg-card-hover: rgba(245, 238, 226, 0.95);
+  --bg-input: rgba(240, 234, 222, 0.88);
+  --border-color: rgba(216, 205, 186, 0.85);
+  --border-glow: rgba(249, 115, 22, 0.35);
 
   --text-primary: #292524;
   --text-secondary: #57534e;
@@ -55,7 +61,7 @@
   --accent-indigo: #4f46e5;
   --accent-purple: #9333ea;
   --accent-emerald: #059669;
-  --accent-amber: #d97706;
+  --accent-amber: #ea580c;
 
   --terminal-bg: #1c1917;
   --terminal-border: #292524;
@@ -70,6 +76,9 @@ html, body {
   padding: 0;
   overflow-x: hidden;
   background-color: var(--bg-primary);
+  background-image: var(--bg-hazy-gradient, none);
+  background-attachment: fixed;
+  background-size: cover;
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-text-size-adjust: 100%;
