@@ -38,33 +38,33 @@
 }
 
 [data-theme="light"] {
-  /* Warm Hazy Multi-Color Light Theme */
-  --bg-primary: #f8f4ec;
+  /* Hazy Bluish-Pink Light Theme */
+  --bg-primary: #f5f7fc;
   --bg-hazy-gradient: 
-    radial-gradient(at 0% 0%, rgba(254, 215, 170, 0.6) 0px, transparent 55%),
-    radial-gradient(at 100% 0%, rgba(253, 186, 116, 0.5) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(244, 114, 182, 0.35) 0px, transparent 55%),
-    radial-gradient(at 0% 100%, rgba(253, 230, 138, 0.55) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(251, 146, 60, 0.22) 0px, transparent 65%);
-  --bg-secondary: rgba(240, 234, 222, 0.85);
-  --bg-card: rgba(253, 251, 247, 0.82);
-  --bg-card-hover: rgba(245, 238, 226, 0.95);
-  --bg-input: rgba(240, 234, 222, 0.88);
-  --border-color: rgba(216, 205, 186, 0.85);
-  --border-glow: rgba(249, 115, 22, 0.35);
+    radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.65) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(251, 207, 232, 0.6) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(196, 181, 253, 0.5) 0px, transparent 55%),
+    radial-gradient(at 0% 100%, rgba(253, 164, 175, 0.45) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(165, 243, 252, 0.45) 0px, transparent 65%);
+  --bg-secondary: rgba(238, 242, 250, 0.85);
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: rgba(241, 245, 254, 0.95);
+  --bg-input: rgba(238, 242, 250, 0.88);
+  --border-color: rgba(203, 213, 225, 0.85);
+  --border-glow: rgba(236, 72, 153, 0.35);
 
-  --text-primary: #292524;
-  --text-secondary: #57534e;
-  --text-muted: #78716c;
+  --text-primary: #1e1b4b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
 
   --accent-cyan: #0284c7;
-  --accent-indigo: #4f46e5;
-  --accent-purple: #9333ea;
+  --accent-indigo: #6366f1;
+  --accent-purple: #a855f7;
   --accent-emerald: #059669;
-  --accent-amber: #ea580c;
+  --accent-amber: #d97706;
 
-  --terminal-bg: #1c1917;
-  --terminal-border: #292524;
+  --terminal-bg: #1e1b4b;
+  --terminal-border: #312e81;
   --terminal-text: #38bdf8;
 }
 
