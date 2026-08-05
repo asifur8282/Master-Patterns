@@ -9,7 +9,6 @@ import {
   Cpu, 
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   Terminal,
   Grid,
   Zap,
@@ -171,16 +170,6 @@ export function SitemapPage({ onNavigate }) {
             <div>
               <h4>Multi-Character & Symbol Customization</h4>
               <p>Supports custom unit padding, multi-character symbols, and responsive font formatting in mono space font engine.</p>
-            </div>
-          </div>
-
-          <div className="feature-box glass-card">
-            <div className="feature-icon emerald">
-              <CheckCircle2 size={22} />
-            </div>
-            <div>
-              <h4>SEO & Single Page Application Routing</h4>
-              <p>Configured with Vercel SPA rewrites (`vercel.json`), XML sitemap (`sitemap.xml`), and HTML5 history API navigation.</p>
             </div>
           </div>
         </div>
