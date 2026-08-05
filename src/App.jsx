@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Heart } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { PatternGallery } from './components/PatternGallery';
 import { PatternLab } from './components/PatternLab';
@@ -108,7 +109,23 @@ export function App() {
         alignItems: 'center',
         gap: '12px'
       }}>
-        <p>Master Patterns - Modern CS Pattern Learning Platform & Visualizer</p>
+        <p style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', justifyContent: 'center', margin: 0 }}>
+          Made with <Heart size={15} fill="#ef4444" color="#ef4444" style={{ display: 'inline' }} /> by{' '}
+          <a
+            href="https://asifur-rahaman-portfolio.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--accent-cyan)', fontWeight: 600, textDecoration: 'none' }}
+          >
+            Asifur Rahaman
+          </a>{' '}
+          for fellow learners
+        </p>
+
+        <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+          Master Patterns - Modern CS Pattern Learning Platform & Visualizer
+        </p>
+
         <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem' }}>
           <button 
             onClick={() => handleNavigate('gallery')}
@@ -130,4 +147,5 @@ export function App() {
 }
 
 export default App;
+
 
