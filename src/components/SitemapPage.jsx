@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { PATTERNS } from '../data/patterns';
 
-export function SitemapPage({ onNavigate }) {
+export function SitemapPage({ onNavigate, onSelectPattern }) {
   // Group patterns by category
   const categoriesMap = PATTERNS.reduce((acc, p) => {
     acc[p.category] = acc[p.category] || [];
@@ -123,7 +123,7 @@ export function SitemapPage({ onNavigate }) {
               </div>
               <ul className="pattern-list">
                 {categoriesMap[cat].map((p) => (
-                  <li key={p.id} className="pattern-item" onClick={() => onNavigate('gallery')}>
+                  <li key={p.id} className="pattern-item" onClick={() => onSelectPattern ? onSelectPattern(p) : onNavigate('gallery')}>
                     <Code2 size={14} className="item-icon" />
                     <span className="item-name">{p.name}</span>
                     <span className="item-id">{p.id}</span>

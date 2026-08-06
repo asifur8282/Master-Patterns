@@ -105,6 +105,7 @@ export function App() {
         {activeView === 'sitemap' && (
           <SitemapPage
             onNavigate={handleNavigate}
+            onSelectPattern={handleSelectPattern}
           />
         )}
       </main>
