@@ -73,7 +73,6 @@ export function ReportForm({ initialPattern, onBack }) {
     formData.append('message', description);
 
     try {
-      // If Web3Forms API key is set or fallback
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData
@@ -140,7 +139,7 @@ export function ReportForm({ initialPattern, onBack }) {
           </div>
           <h2>Thank you for Contributing to Master Patterns</h2>
           <p className="success-text">
-            Your report has been successfully transmitted via Web3Forms. We deeply appreciate your support in making Master Patterns better for everyone!
+            Your report has been successfully transmitted. We deeply appreciate your support in making Master Patterns better for everyone!
           </p>
 
           <div className="success-meta">

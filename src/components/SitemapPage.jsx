@@ -81,7 +81,7 @@ export function SitemapPage({ onNavigate, onSelectPattern }) {
             </div>
             <h3>Report Error / Feedback</h3>
             <p>
-              Community contribution form powered by Web3Forms. Report pattern code bugs, non-working patterns, or submit general feedback.
+              Community contribution form. Report pattern code bugs, non-working patterns, or submit general feedback.
             </p>
             <div className="card-footer-link">
               <span>Submit Feedback</span>
