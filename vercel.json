@@ -1,16 +1,16 @@
 {
   "headers": [
     {
-      "source": "/.well-known/ai-catalog.json",
+      "source": "/.well-known/(.*)",
       "headers": [
-        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
     {
-      "source": "/ai-catalog.json",
+      "source": "/(.*).json",
       "headers": [
-        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     },
@@ -19,12 +19,15 @@
       "headers": [
         {
           "key": "Link",
-          "value": "</.well-known/ai-catalog.json>; rel=\"service-desc\"; type=\"application/json\""
+          "value": "</.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/json\""
         }
       ]
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/((?!\\.well-known|.*\\..*).*)",
+      "destination": "/index.html"
+    }
   ]
 }
