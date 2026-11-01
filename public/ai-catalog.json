@@ -1,0 +1,21 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Master Patterns",
+    "documentationUrl": "https://master-patterns.vercel.app/llms.txt"
+  },
+  "entries": [
+    {
+      "identifier": "urn:ai:master-patterns.vercel.app:resource:patterns",
+      "displayName": "Master Patterns Library",
+      "type": "text/markdown",
+      "url": "https://master-patterns.vercel.app/llms.txt",
+      "description": "Comprehensive catalog of CS pattern printing problems, logic breakdowns, and multi-language code generation for AI agents.",
+      "representativeQueries": [
+        "nested loop star pattern logic",
+        "pyramid pattern code in C and Python",
+        "diamond and number pattern solutions"
+      ]
+    }
+  ]
+}

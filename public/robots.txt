@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 
 Sitemap: https://master-patterns.vercel.app/sitemap.xml
-# LLM Context File
+# LLM & Agent Context
 # https://master-patterns.vercel.app/llms.txt
+# https://master-patterns.vercel.app/.well-known/ai-catalog.json
 
