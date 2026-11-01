@@ -6,9 +6,9 @@
   },
   "entries": [
     {
-      "identifier": "urn:ai:master-patterns.vercel.app:resource:patterns",
+      "identifier": "urn:air:master-patterns.vercel.app:resource:patterns",
       "displayName": "Master Patterns Library",
-      "type": "text/markdown",
+      "type": "text/markdown; profile=\"urn:air:agent-skills\"",
       "url": "https://master-patterns.vercel.app/llms.txt",
       "description": "Comprehensive catalog of CS pattern printing problems, logic breakdowns, and multi-language code generation for AI agents.",
       "representativeQueries": [

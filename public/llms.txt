@@ -1,3 +1,8 @@
+---
+name: master-patterns
+description: Interactive Computer Science pattern learning catalog, visualizer, and multi-language code generator for AI agents.
+---
+
 # Master Patterns
 
 > Master Patterns is a modern Computer Science (CS) Pattern Learning Platform & Visualizer. It provides interactive step-by-step visual tracing and multi-language code generation (C, C++, Java, Python, JavaScript) for classic and advanced matrix/symbol pattern programs.
