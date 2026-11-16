@@ -684,6 +684,144 @@ export const PATTERNS = [
       return steps;
     }
   },
+  {
+    id: "num_007",
+    name: "Binary (0-1) Triangle",
+    category: "Number",
+    difficulty: "Easy",
+    description: "Alternates between 1 and 0 in each row and column based on coordinate parity ((i + j) % 2 == 0). A classic technical interview problem.",
+    defaultRows: 5,
+    defaultSpaces: 1,
+    defaultSymbol: "1",
+    isSymbolCustomizable: false,
+    generateOutput: (rows, spacePadding = 1) => {
+      const sp = " ".repeat(spacePadding);
+      let res = [];
+      for (let i = 1; i <= rows; i++) {
+        let line = [];
+        for (let j = 1; j <= i; j++) {
+          line.push((i + j) % 2 === 0 ? "1" : "0");
+        }
+        res.push(line.join(sp));
+      }
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 1) => {
+      const sp = " ".repeat(spacePadding);
+      const steps = [];
+      let currentOutput = [];
+      for (let i = 1; i <= rows; i++) {
+        let line = [];
+        for (let j = 1; j <= i; j++) {
+          line.push((i + j) % 2 === 0 ? "1" : "0");
+        }
+        const strLine = line.join(sp);
+        currentOutput.push(strLine);
+        steps.push({
+          step: i,
+          row: i,
+          lineAdded: strLine,
+          explanation: `Row ${i}: Starts with ${i % 2 !== 0 ? '1' : '0'}, alternating parity for ${i} columns.`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      return steps;
+    }
+  },
+  {
+    id: "num_008",
+    name: "Number Crown / Bridge",
+    category: "Number",
+    difficulty: "Medium",
+    description: "Symmetrical double-wing number bridge featuring ascending numbers on the left, a dynamic space gap, and descending numbers on the right.",
+    defaultRows: 4,
+    defaultSpaces: 1,
+    defaultSymbol: "1",
+    isSymbolCustomizable: false,
+    generateOutput: (rows, spacePadding = 1) => {
+      const pad = " ".repeat(spacePadding);
+      let res = [];
+      for (let i = 1; i <= rows; i++) {
+        let left = "";
+        for (let j = 1; j <= i; j++) left += j + pad;
+        const midSpaces = " ".repeat(2 * (rows - i) * (1 + spacePadding));
+        let right = "";
+        for (let j = i; j >= 1; j--) right += (j === 1 ? j : j + pad);
+        res.push(left + midSpaces + right);
+      }
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 1) => {
+      const pad = " ".repeat(spacePadding);
+      const steps = [];
+      let currentOutput = [];
+      for (let i = 1; i <= rows; i++) {
+        let left = "";
+        for (let j = 1; j <= i; j++) left += j + pad;
+        const midSpaces = " ".repeat(2 * (rows - i) * (1 + spacePadding));
+        let right = "";
+        for (let j = i; j >= 1; j--) right += (j === 1 ? j : j + pad);
+        const line = left + midSpaces + right;
+        currentOutput.push(line);
+        steps.push({
+          step: i,
+          row: i,
+          lineAdded: line,
+          explanation: `Row ${i}: Ascend 1..${i}, print ${2 * (rows - i)} gap units, descend ${i}..1.`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      return steps;
+    }
+  },
+  {
+    id: "num_009",
+    name: "Concentric Number Square",
+    category: "Advanced",
+    difficulty: "Hard",
+    description: "A nested square matrix counting down from N to 1 at the center. Each cell value is determined by N minus the minimum distance to any boundary.",
+    defaultRows: 4,
+    defaultSpaces: 1,
+    defaultSymbol: "4",
+    isSymbolCustomizable: false,
+    generateOutput: (rows, spacePadding = 1) => {
+      const pad = " ".repeat(spacePadding);
+      const size = 2 * rows - 1;
+      let res = [];
+      for (let i = 0; i < size; i++) {
+        let row = [];
+        for (let j = 0; j < size; j++) {
+          const minDist = Math.min(i, j, size - 1 - i, size - 1 - j);
+          row.push(rows - minDist);
+        }
+        res.push(row.join(pad));
+      }
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 1) => {
+      const pad = " ".repeat(spacePadding);
+      const size = 2 * rows - 1;
+      const steps = [];
+      let currentOutput = [];
+      for (let i = 0; i < size; i++) {
+        let row = [];
+        for (let j = 0; j < size; j++) {
+          const minDist = Math.min(i, j, size - 1 - i, size - 1 - j);
+          row.push(rows - minDist);
+        }
+        const line = row.join(pad);
+        currentOutput.push(line);
+        steps.push({
+          step: i + 1,
+          row: i + 1,
+          lineAdded: line,
+          explanation: `Row ${i + 1}/${size}: Layer bounds computed via N - min(top, bottom, left, right).`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      return steps;
+    }
+  },
 
   // --- CHARACTER PATTERNS ---
   {
@@ -801,6 +939,50 @@ export const PATTERNS = [
     }
   },
   {
+    id: "chr_004",
+    name: "Reverse Alphabet Triangle",
+    category: "Character",
+    difficulty: "Medium",
+    description: "In each row i, starts from the descending (N - i + 1)-th letter and advances sequentially up to the N-th letter of the alphabet.",
+    defaultRows: 5,
+    defaultSpaces: 1,
+    defaultSymbol: "E",
+    isSymbolCustomizable: false,
+    generateOutput: (rows, spacePadding = 1) => {
+      const pad = " ".repeat(spacePadding);
+      let res = [];
+      for (let i = 1; i <= rows; i++) {
+        let row = [];
+        for (let j = 0; j < i; j++) {
+          row.push(String.fromCharCode(65 + rows - i + j));
+        }
+        res.push(row.join(pad));
+      }
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 1) => {
+      const pad = " ".repeat(spacePadding);
+      const steps = [];
+      let currentOutput = [];
+      for (let i = 1; i <= rows; i++) {
+        let row = [];
+        for (let j = 0; j < i; j++) {
+          row.push(String.fromCharCode(65 + rows - i + j));
+        }
+        const line = row.join(pad);
+        currentOutput.push(line);
+        steps.push({
+          step: i,
+          row: i,
+          lineAdded: line,
+          explanation: `Row ${i}: Start at '${String.fromCharCode(65 + rows - i)}' and print ${i} sequential letters.`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      return steps;
+    }
+  },
+  {
     id: "ast_013",
     name: "Heart Shape Pattern",
     category: "Advanced",
@@ -872,6 +1054,79 @@ export const PATTERNS = [
         });
       }
       
+      return steps;
+    }
+  },
+  {
+    id: "ast_014",
+    name: "Hollow Diamond Pattern",
+    category: "Pyramid",
+    difficulty: "Hard",
+    description: "Classic geometric hollow diamond. Only boundary perimeter edges are drawn with symbols while the internal area remains hollow.",
+    defaultRows: 5,
+    defaultSpaces: 1,
+    defaultSymbol: "*",
+    isSymbolCustomizable: true,
+    generateOutput: (rows, spacePadding = 1, symbol = "*") => {
+      const { unitWidth } = getUnitConfig(symbol, spacePadding);
+      let res = [];
+      // Upper half
+      for (let i = 1; i <= rows; i++) {
+        const lead = " ".repeat((rows - i) * unitWidth);
+        if (i === 1) {
+          res.push(lead + symbol);
+        } else {
+          const mid = " ".repeat((2 * i - 3) * unitWidth + (unitWidth - symbol.length));
+          res.push(lead + symbol + mid + symbol);
+        }
+      }
+      // Lower half
+      for (let i = rows - 1; i >= 1; i--) {
+        const lead = " ".repeat((rows - i) * unitWidth);
+        if (i === 1) {
+          res.push(lead + symbol);
+        } else {
+          const mid = " ".repeat((2 * i - 3) * unitWidth + (unitWidth - symbol.length));
+          res.push(lead + symbol + mid + symbol);
+        }
+      }
+      return res.join("\n");
+    },
+    getStepByStepData: (rows, spacePadding = 1, symbol = "*") => {
+      const { unitWidth } = getUnitConfig(symbol, spacePadding);
+      const steps = [];
+      let currentOutput = [];
+      let stepCount = 1;
+      // Upper half
+      for (let i = 1; i <= rows; i++) {
+        const lead = " ".repeat((rows - i) * unitWidth);
+        const line = (i === 1) 
+          ? lead + symbol 
+          : lead + symbol + " ".repeat((2 * i - 3) * unitWidth + (unitWidth - symbol.length)) + symbol;
+        currentOutput.push(line);
+        steps.push({
+          step: stepCount++,
+          row: i,
+          lineAdded: line,
+          explanation: i === 1 ? `Top apex: Print centered '${symbol}'.` : `Upper row ${i}: Outline boundary with '${symbol}' separated by inner gap.`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
+      // Lower half
+      for (let i = rows - 1; i >= 1; i--) {
+        const lead = " ".repeat((rows - i) * unitWidth);
+        const line = (i === 1) 
+          ? lead + symbol 
+          : lead + symbol + " ".repeat((2 * i - 3) * unitWidth + (unitWidth - symbol.length)) + symbol;
+        currentOutput.push(line);
+        steps.push({
+          step: stepCount++,
+          row: stepCount - 1,
+          lineAdded: line,
+          explanation: i === 1 ? `Bottom apex: Print centered '${symbol}'.` : `Lower row: Converge boundary inward.`,
+          fullOutput: currentOutput.join("\n")
+        });
+      }
       return steps;
     }
   }

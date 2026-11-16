@@ -19,16 +19,21 @@ export function generateCode(patternId, rows = 5, spacePadding = 1, symbol = "*"
     case "ast_011": return getAst011Code(rows, spacePadding, cleanSymbol, lang);
     case "ast_012": return getAst012Code(rows, spacePadding, cleanSymbol, lang);
     case "ast_013": return getAst013Code(rows, spacePadding, cleanSymbol, lang);
+    case "ast_014": return getAst014Code(rows, spacePadding, cleanSymbol, lang);
 
     case "num_001": return getNum001Code(rows, spacePadding, lang);
     case "num_002": return getNum002Code(rows, spacePadding, lang);
     case "num_004": return getNum004Code(rows, spacePadding, lang);
     case "num_005": return getNum005Code(rows, lang);
     case "num_006": return getNum006Code(rows, lang);
+    case "num_007": return getNum007Code(rows, spacePadding, lang);
+    case "num_008": return getNum008Code(rows, spacePadding, lang);
+    case "num_009": return getNum009Code(rows, spacePadding, lang);
 
     case "chr_001": return getChr001Code(rows, spacePadding, cleanSymbol, lang);
     case "chr_002": return getChr002Code(rows, spacePadding, cleanSymbol, lang);
     case "chr_003": return getChr003Code(rows, spacePadding, cleanSymbol, lang);
+    case "chr_004": return getChr004Code(rows, spacePadding, cleanSymbol, lang);
 
     default: return getAst001Code(rows, spacePadding, cleanSymbol, lang);
   }
@@ -1617,6 +1622,469 @@ function getAst013Code(rows, sp, symbol, lang) {
     { code: `    const leftSpaces = "${h.unitSpaces}".repeat(Math.max(0, rows - i));`, explanation: "Centering spaces." },
     { code: `    const symbols = (symbol + "${h.spaces}").repeat(2 * i - 1).trimEnd();`, explanation: "Row symbols." },
     { code: '    console.log(leftSpaces + symbols);', explanation: "Outputs lower row.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
+}
+
+// --- BINARY (0-1) TRIANGLE (num_007) ---
+
+function getNum007Code(rows, sp, lang) {
+  const spaces = " ".repeat(sp);
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Program entry point." },
+    { code: `    int rows = ${rows};`, explanation: "Number of triangle rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Iterates from row 1 to rows.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Prints i binary digits per row.", highlightType: "inner" },
+    { code: '            if ((i + j) % 2 == 0) {', explanation: "PARITY CHECK: Even index sum produces 1, odd produces 0." },
+    { code: `                printf("1${spaces}");`, explanation: "Prints digit 1 with spacing.", highlightType: "output" },
+    { code: '            } else {', explanation: "Alternating parity condition." },
+    { code: `                printf("0${spaces}");`, explanation: "Prints digit 0 with spacing.", highlightType: "output" },
+    { code: '            }', explanation: "End parity condition." },
+    { code: '        }', explanation: "End inner column loop." },
+    { code: '        printf("\\n");', explanation: "Moves to next row.", highlightType: "output" },
+    { code: '    }', explanation: "End outer row loop." },
+    { code: '    return 0;', explanation: "Exit successfully." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Standard namespace." },
+    { code: 'int main() {', explanation: "Program entry point." },
+    { code: `    int rows = ${rows};`, explanation: "Number of triangle rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row counter.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Column counter.", highlightType: "inner" },
+    { code: `            if ((i + j) % 2 == 0) cout << 1 << "${spaces}";`, explanation: "Prints 1 on even parity coordinates.", highlightType: "output" },
+    { code: `            else cout << 0 << "${spaces}";`, explanation: "Prints 0 on odd parity coordinates.", highlightType: "output" },
+    { code: '        }', explanation: "End inner loop." },
+    { code: '        cout << endl;', explanation: "Newline at row end.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class BinaryTriangle {', explanation: "Class declaration." },
+    { code: '    public static void main(String[] args) {', explanation: "Application entry point." },
+    { code: `        int rows = ${rows};`, explanation: "Number of triangle rows." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row iterator.", highlightType: "loop" },
+    { code: '            for (int j = 1; j <= i; j++) {', explanation: "INNER LOOP: Column iterator.", highlightType: "inner" },
+    { code: '                if ((i + j) % 2 == 0) {', explanation: "Coordinate parity calculation." },
+    { code: `                    System.out.print("1${spaces}");`, explanation: "Prints '1' with padding.", highlightType: "output" },
+    { code: '                } else {', explanation: "Alternating condition." },
+    { code: `                    System.out.print("0${spaces}");`, explanation: "Prints '0' with padding.", highlightType: "output" },
+    { code: '                }', explanation: "End if-else." },
+    { code: '            }', explanation: "End column loop." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End row loop." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Number of rows." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '    for j in range(1, i + 1):', explanation: "INNER LOOP: 1 to i.", highlightType: "inner" },
+    { code: '        val = 1 if (i + j) % 2 == 0 else 0', explanation: "Compute parity: 1 if (i+j) even, else 0." },
+    { code: `        print(str(val) + "${spaces}", end="")`, explanation: "Print alternating digit on same line.", highlightType: "output" },
+    { code: '    print()', explanation: "Advance to next line.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Number of rows." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row index.", highlightType: "loop" },
+    { code: '    let line = "";', explanation: "Initialize row string." },
+    { code: '    for (let j = 1; j <= i; j++) {', explanation: "INNER LOOP: Column index.", highlightType: "inner" },
+    { code: `        line += ((i + j) % 2 === 0 ? "1" : "0") + "${spaces}";`, explanation: "Append alternating 1 or 0.", highlightType: "output" },
+    { code: '    }', explanation: "End inner loop." },
+    { code: '    console.log(line.trimEnd());', explanation: "Output row to console.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
+}
+
+// --- NUMBER CROWN / BRIDGE (num_008) ---
+
+function getNum008Code(rows, sp, lang) {
+  const spaces = " ".repeat(sp);
+  const gapUnit = " ".repeat(2 * (1 + sp));
+
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Crown height." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row 1 to rows.", highlightType: "loop" },
+    { code: '        // 1. Left ascending numbers', explanation: "Prints 1 through i." },
+    { code: `        for (int j = 1; j <= i; j++) printf("%d${spaces}", j);`, explanation: "Ascending sequence.", highlightType: "inner" },
+    { code: '        // 2. Central spacing gap', explanation: "Decreasing middle gap of 2*(rows - i) units." },
+    { code: `        for (int s = 1; s <= 2 * (rows - i); s++) printf("${" ".repeat(1 + sp)}");`, explanation: "Central spacer.", highlightType: "inner" },
+    { code: '        // 3. Right descending numbers', explanation: "Prints i down to 1." },
+    { code: `        for (int j = i; j >= 1; j--) printf("%d${spaces}", j);`, explanation: "Descending sequence.", highlightType: "inner" },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit successfully." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Namespace declaration." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row counter.", highlightType: "loop" },
+    { code: `        for (int j = 1; j <= i; j++) cout << j << "${spaces}";`, explanation: "1. Ascending numbers.", highlightType: "inner" },
+    { code: `        for (int s = 1; s <= 2 * (rows - i); s++) cout << "${" ".repeat(1 + sp)}";`, explanation: "2. Gap spaces.", highlightType: "inner" },
+    { code: `        for (int j = i; j >= 1; j--) cout << j << "${spaces}";`, explanation: "3. Descending numbers.", highlightType: "inner" },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class NumberCrown {', explanation: "Class declaration." },
+    { code: '    public static void main(String[] args) {', explanation: "Main entry." },
+    { code: `        int rows = ${rows};`, explanation: "Height." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row iterator.", highlightType: "loop" },
+    { code: `            for (int j = 1; j <= i; j++) System.out.print(j + "${spaces}");`, explanation: "Left ascending digits.", highlightType: "inner" },
+    { code: `            for (int s = 1; s <= 2 * (rows - i); s++) System.out.print("${" ".repeat(1 + sp)}");`, explanation: "Center gap spaces.", highlightType: "inner" },
+    { code: `            for (int j = i; j >= 1; j--) System.out.print(j + "${spaces}");`, explanation: "Right descending digits.", highlightType: "inner" },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End row loop." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Total rows." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: `    left = "".join(f"{j}${" " * sp}" for j in range(1, i + 1))`, explanation: "Construct left ascending string." },
+    { code: `    mid = "${gapUnit}" * (rows - i)`, explanation: "Construct central space gap." },
+    { code: `    right = "".join(f"{j}${" " * sp}" for j in range(i, 0, -1))`, explanation: "Construct right descending string." },
+    { code: '    print(left + mid + right)', explanation: "Print combined bridge row.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Total rows." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '    let left = "";', explanation: "Left string." },
+    { code: `    for (let j = 1; j <= i; j++) left += j + "${spaces}";`, explanation: "Build left ascending numbers.", highlightType: "inner" },
+    { code: `    const mid = "${gapUnit}".repeat(rows - i);`, explanation: "Build middle spacing gap." },
+    { code: '    let right = "";', explanation: "Right string." },
+    { code: `    for (let j = i; j >= 1; j--) right += j + "${spaces}";`, explanation: "Build right descending numbers.", highlightType: "inner" },
+    { code: '    console.log(left + mid + right);', explanation: "Print row.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
+}
+
+// --- CONCENTRIC NUMBER SQUARE (num_009) ---
+
+function getNum009Code(rows, sp, lang) {
+  const spaces = " ".repeat(sp);
+  const size = 2 * rows - 1;
+
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int min(int a, int b) { return a < b ? a : b; }', explanation: "Helper to find minimum value." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Concentric layer depth (N)." },
+    { code: `    int size = 2 * rows - 1;`, explanation: "Total grid width and height (2*N - 1)." },
+    { code: '    for (int i = 0; i < size; i++) {', explanation: "OUTER LOOP: Row index from 0 to size - 1.", highlightType: "loop" },
+    { code: '        for (int j = 0; j < size; j++) {', explanation: "INNER LOOP: Column index from 0 to size - 1.", highlightType: "inner" },
+    { code: '            int top = i;', explanation: "Distance from current cell to top boundary." },
+    { code: '            int left = j;', explanation: "Distance to left boundary." },
+    { code: '            int bottom = size - 1 - i;', explanation: "Distance to bottom boundary." },
+    { code: '            int right = size - 1 - j;', explanation: "Distance to right boundary." },
+    { code: '            int minDist = min(min(top, bottom), min(left, right));', explanation: "Minimum distance to any boundary." },
+    { code: `            printf("%d${spaces}", rows - minDist);`, explanation: "Output value: N - minimum distance.", highlightType: "output" },
+    { code: '        }', explanation: "End column loop." },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End row loop." },
+    { code: '    return 0;', explanation: "Exit successfully." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: '#include <algorithm>', explanation: "Provides std::min algorithm." },
+    { code: 'using namespace std;', explanation: "Namespace." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Layer depth." },
+    { code: `    int size = 2 * rows - 1;`, explanation: "Matrix dimension." },
+    { code: '    for (int i = 0; i < size; i++) {', explanation: "OUTER LOOP: Row iterator.", highlightType: "loop" },
+    { code: '        for (int j = 0; j < size; j++) {', explanation: "INNER LOOP: Column iterator.", highlightType: "inner" },
+    { code: '            int minDist = min({i, j, size - 1 - i, size - 1 - j});', explanation: "Calculate minimum distance to 4 boundaries." },
+    { code: `            cout << (rows - minDist) << "${spaces}";`, explanation: "Print cell value: rows - minDist.", highlightType: "output" },
+    { code: '        }', explanation: "End column loop." },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End row loop." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class ConcentricSquare {', explanation: "Class declaration." },
+    { code: '    public static void main(String[] args) {', explanation: "Application entry point." },
+    { code: `        int rows = ${rows};`, explanation: "Depth parameter N." },
+    { code: `        int size = 2 * rows - 1;`, explanation: "Total dimensions (2N - 1)." },
+    { code: '        for (int i = 0; i < size; i++) {', explanation: "OUTER LOOP: Row traversal.", highlightType: "loop" },
+    { code: '            for (int j = 0; j < size; j++) {', explanation: "INNER LOOP: Column traversal.", highlightType: "inner" },
+    { code: '                int minDist = Math.min(Math.min(i, j), Math.min(size - 1 - i, size - 1 - j));', explanation: "Distance from nearest edge." },
+    { code: `                System.out.print((rows - minDist) + "${spaces}");`, explanation: "Cell value print.", highlightType: "output" },
+    { code: '            }', explanation: "End column loop." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End row loop." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Depth parameter." },
+    { code: `size = 2 * rows - 1`, explanation: "Square grid side length." },
+    { code: 'for i in range(size):', explanation: "OUTER LOOP: Row 0 to size - 1.", highlightType: "loop" },
+    { code: '    for j in range(size):', explanation: "INNER LOOP: Column 0 to size - 1.", highlightType: "inner" },
+    { code: '        min_dist = min(i, j, size - 1 - i, size - 1 - j)', explanation: "Find distance to nearest edge." },
+    { code: `        print(f"{rows - min_dist}${spaces}", end="")`, explanation: "Print cell value on same line.", highlightType: "output" },
+    { code: '    print()', explanation: "Advance to next line.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Depth." },
+    { code: `const size = 2 * rows - 1;`, explanation: "Grid dimensions." },
+    { code: 'for (let i = 0; i < size; i++) {', explanation: "OUTER LOOP: Row iterator.", highlightType: "loop" },
+    { code: '    let line = "";', explanation: "Line buffer." },
+    { code: '    for (let j = 0; j < size; j++) {', explanation: "INNER LOOP: Column iterator.", highlightType: "inner" },
+    { code: '        const minDist = Math.min(i, j, size - 1 - i, size - 1 - j);', explanation: "Edge distance calculation." },
+    { code: `        line += (rows - minDist) + "${spaces}";`, explanation: "Append cell value to row buffer.", highlightType: "output" },
+    { code: '    }', explanation: "End inner loop." },
+    { code: '    console.log(line.trimEnd());', explanation: "Print row line.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
+}
+
+// --- REVERSE ALPHABET TRIANGLE (chr_004) ---
+
+function getChr004Code(rows, sp, cleanSymbol, lang) {
+  const spaces = " ".repeat(sp);
+
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Number of rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row 1 to rows.", highlightType: "loop" },
+    { code: '        for (char ch = \'A\' + rows - i; ch <= \'A\' + rows - 1; ch++) {', explanation: "INNER LOOP: Starts from descending letter up to Nth letter.", highlightType: "inner" },
+    { code: `            printf("%c${spaces}", ch);`, explanation: "Prints character with spacing.", highlightType: "output" },
+    { code: '        }', explanation: "End character loop." },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End row loop." },
+    { code: '    return 0;', explanation: "Exit successfully." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Namespace declaration." },
+    { code: 'int main() {', explanation: "Main entry." },
+    { code: `    int rows = ${rows};`, explanation: "Rows." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row counter.", highlightType: "loop" },
+    { code: '        for (char ch = \'A\' + rows - i; ch <= \'A\' + rows - 1; ch++) {', explanation: "INNER LOOP: Character sequence.", highlightType: "inner" },
+    { code: `            cout << ch << "${spaces}";`, explanation: "Print character.", highlightType: "output" },
+    { code: '        }', explanation: "End inner loop." },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End outer loop." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class ReverseAlphabetTriangle {', explanation: "Class declaration." },
+    { code: '    public static void main(String[] args) {', explanation: "Application entry point." },
+    { code: `        int rows = ${rows};`, explanation: "Triangle rows." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Row iterator.", highlightType: "loop" },
+    { code: '            for (char ch = (char)(\'A\' + rows - i); ch <= (char)(\'A\' + rows - 1); ch++) {', explanation: "INNER LOOP: Start at (A + rows - i) and advance.", highlightType: "inner" },
+    { code: `                System.out.print(ch + "${spaces}");`, explanation: "Print character.", highlightType: "output" },
+    { code: '            }', explanation: "End character loop." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End row loop." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Total rows." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '    for j in range(i):', explanation: "INNER LOOP: 0 to i - 1.", highlightType: "inner" },
+    { code: '        ch = chr(ord(\'A\') + rows - i + j)', explanation: "Compute current character from base ASCII code." },
+    { code: `        print(f"{ch}${spaces}", end="")`, explanation: "Print character on current line.", highlightType: "output" },
+    { code: '    print()', explanation: "Newline.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Number of rows." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: 1 to rows.", highlightType: "loop" },
+    { code: '    let line = "";', explanation: "Row buffer." },
+    { code: '    for (let j = 0; j < i; j++) {', explanation: "INNER LOOP: Iterate i characters.", highlightType: "inner" },
+    { code: `        line += String.fromCharCode(65 + rows - i + j) + "${spaces}";`, explanation: "Append character.", highlightType: "output" },
+    { code: '    }', explanation: "End character loop." },
+    { code: '    console.log(line.trimEnd());', explanation: "Print row.", highlightType: "output" },
+    { code: '}' }
+  ];
+
+  return renderMultiLang(lang, cLines, cppLines, javaLines, pyLines, jsLines);
+}
+
+// --- HOLLOW DIAMOND PATTERN (ast_014) ---
+
+function getAst014Code(rows, sp, symbol, lang) {
+  const h = getSymbolHelpers(symbol, lang, sp);
+
+  const cLines = [
+    { code: '#include <stdio.h>', explanation: "Standard I/O header." },
+    { code: 'int main() {', explanation: "Program entry point." },
+    { code: `    int rows = ${rows};`, explanation: "Apex height." },
+    { code: `    ${h.decl}`, explanation: "Symbol variable declaration." },
+    { code: '    // Upper half (expanding perimeter)', explanation: "Draw top cone of diamond." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Upper rows.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= rows - i; j++) {', explanation: "INNER LOOP: Left indentation.", highlightType: "inner" },
+    { code: `            printf("${h.unitSpaces}");`, explanation: "Indentation spacer." },
+    { code: '        }', explanation: "End indentation." },
+    { code: `        ${h.printSym}`, explanation: "Left boundary symbol.", highlightType: "output" },
+    { code: '        if (i > 1) {', explanation: "Interior hollow gap on rows > 1." },
+    { code: '            for (int j = 1; j <= 2 * i - 3; j++) {', explanation: "INNER LOOP: Hollow middle gap.", highlightType: "inner" },
+    { code: `                printf("${h.unitSpaces}");`, explanation: "Internal space gap." },
+    { code: '            }', explanation: "End middle gap." },
+    { code: `            ${h.printSym}`, explanation: "Right boundary symbol.", highlightType: "output" },
+    { code: '        }', explanation: "End boundary." },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End upper half." },
+    { code: '    // Lower half (converging perimeter)', explanation: "Draw bottom cone of diamond." },
+    { code: '    for (int i = rows - 1; i >= 1; i--) {', explanation: "OUTER LOOP: Lower rows.", highlightType: "loop" },
+    { code: '        for (int j = 1; j <= rows - i; j++) {', explanation: "INNER LOOP: Left indentation.", highlightType: "inner" },
+    { code: `            printf("${h.unitSpaces}");`, explanation: "Indentation spacer." },
+    { code: '        }', explanation: "End indentation." },
+    { code: `        ${h.printSym}`, explanation: "Left boundary symbol.", highlightType: "output" },
+    { code: '        if (i > 1) {', explanation: "Interior hollow gap on rows > 1." },
+    { code: '            for (int j = 1; j <= 2 * i - 3; j++) {', explanation: "INNER LOOP: Hollow middle gap.", highlightType: "inner" },
+    { code: `                printf("${h.unitSpaces}");`, explanation: "Internal space gap." },
+    { code: '            }', explanation: "End middle gap." },
+    { code: `            ${h.printSym}`, explanation: "Right boundary symbol.", highlightType: "output" },
+    { code: '        }', explanation: "End boundary." },
+    { code: '        printf("\\n");', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End lower half." },
+    { code: '    return 0;', explanation: "Exit successfully." },
+    { code: '}' }
+  ];
+
+  const cppLines = [
+    { code: '#include <iostream>', explanation: "I/O stream header." },
+    { code: 'using namespace std;', explanation: "Namespace declaration." },
+    { code: 'int main() {', explanation: "Program entry point." },
+    { code: `    int rows = ${rows};`, explanation: "Apex height." },
+    { code: `    ${h.decl}`, explanation: "Symbol variable declaration." },
+    { code: '    // Upper half', explanation: "Top half." },
+    { code: '    for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Upper rows.", highlightType: "loop" },
+    { code: `        for (int j = 1; j <= rows - i; j++) cout << "${h.unitSpaces}";`, explanation: "Left indentation.", highlightType: "inner" },
+    { code: `        ${h.printSym}`, explanation: "Left boundary.", highlightType: "output" },
+    { code: '        if (i > 1) {', explanation: "Check if row has inner hollow." },
+    { code: `            for (int j = 1; j <= 2 * i - 3; j++) cout << "${h.unitSpaces}";`, explanation: "Inner gap.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Right boundary.", highlightType: "output" },
+    { code: '        }', explanation: "End inner." },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End upper half." },
+    { code: '    // Lower half', explanation: "Bottom half." },
+    { code: '    for (int i = rows - 1; i >= 1; i--) {', explanation: "OUTER LOOP: Lower rows.", highlightType: "loop" },
+    { code: `        for (int j = 1; j <= rows - i; j++) cout << "${h.unitSpaces}";`, explanation: "Left indentation.", highlightType: "inner" },
+    { code: `        ${h.printSym}`, explanation: "Left boundary.", highlightType: "output" },
+    { code: '        if (i > 1) {', explanation: "Check if row has inner hollow." },
+    { code: `            for (int j = 1; j <= 2 * i - 3; j++) cout << "${h.unitSpaces}";`, explanation: "Inner gap.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Right boundary.", highlightType: "output" },
+    { code: '        }', explanation: "End inner." },
+    { code: '        cout << endl;', explanation: "Newline.", highlightType: "output" },
+    { code: '    }', explanation: "End lower half." },
+    { code: '    return 0;', explanation: "Exit." },
+    { code: '}' }
+  ];
+
+  const javaLines = [
+    { code: 'public class HollowDiamond {', explanation: "Class declaration." },
+    { code: '    public static void main(String[] args) {', explanation: "Application entry point." },
+    { code: `        int rows = ${rows};`, explanation: "Height." },
+    { code: `        ${h.decl}`, explanation: "Symbol variable declaration." },
+    { code: '        // Upper half', explanation: "Top cone." },
+    { code: '        for (int i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Upper rows.", highlightType: "loop" },
+    { code: `            for (int j = 1; j <= rows - i; j++) System.out.print("${h.unitSpaces}");`, explanation: "Leading spaces.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Left symbol.", highlightType: "output" },
+    { code: '            if (i > 1) {', explanation: "Check hollow gap." },
+    { code: `                for (int j = 1; j <= 2 * i - 3; j++) System.out.print("${h.unitSpaces}");`, explanation: "Inner hollow gap.", highlightType: "inner" },
+    { code: `                ${h.printSym}`, explanation: "Right symbol.", highlightType: "output" },
+    { code: '            }', explanation: "End gap." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End upper." },
+    { code: '        // Lower half', explanation: "Bottom cone." },
+    { code: '        for (int i = rows - 1; i >= 1; i--) {', explanation: "OUTER LOOP: Lower rows.", highlightType: "loop" },
+    { code: `            for (int j = 1; j <= rows - i; j++) System.out.print("${h.unitSpaces}");`, explanation: "Leading spaces.", highlightType: "inner" },
+    { code: `            ${h.printSym}`, explanation: "Left symbol.", highlightType: "output" },
+    { code: '            if (i > 1) {', explanation: "Check hollow gap." },
+    { code: `                for (int j = 1; j <= 2 * i - 3; j++) System.out.print("${h.unitSpaces}");`, explanation: "Inner hollow gap.", highlightType: "inner" },
+    { code: `                ${h.printSym}`, explanation: "Right symbol.", highlightType: "output" },
+    { code: '            }', explanation: "End gap." },
+    { code: '            System.out.println();', explanation: "Newline.", highlightType: "output" },
+    { code: '        }', explanation: "End lower." },
+    { code: '    }', explanation: "End main." },
+    { code: '}' }
+  ];
+
+  const pyLines = [
+    { code: `rows = ${rows}`, explanation: "Apex height." },
+    { code: `symbol = "${symbol}"`, explanation: "Selected symbol." },
+    { code: '# Upper half', explanation: "Top cone of diamond." },
+    { code: 'for i in range(1, rows + 1):', explanation: "OUTER LOOP: Upper rows.", highlightType: "loop" },
+    { code: `    lead = "${h.unitSpaces}" * (rows - i)`, explanation: "Left indentation." },
+    { code: '    if i == 1:', explanation: "Top apex row has single star." },
+    { code: '        print(lead + symbol)', explanation: "Print apex.", highlightType: "output" },
+    { code: '    else:', explanation: "Rows with two boundary stars." },
+    { code: `        mid = "${h.unitSpaces}" * (2 * i - 3)`, explanation: "Calculate hollow gap." },
+    { code: '        print(lead + symbol + mid + symbol)', explanation: "Print boundaries.", highlightType: "output" },
+    { code: '# Lower half', explanation: "Bottom cone of diamond." },
+    { code: 'for i in range(rows - 1, 0, -1):', explanation: "OUTER LOOP: Lower rows.", highlightType: "loop" },
+    { code: `    lead = "${h.unitSpaces}" * (rows - i)`, explanation: "Left indentation." },
+    { code: '    if i == 1:', explanation: "Bottom apex row has single star." },
+    { code: '        print(lead + symbol)', explanation: "Print apex.", highlightType: "output" },
+    { code: '    else:', explanation: "Rows with two boundary stars." },
+    { code: `        mid = "${h.unitSpaces}" * (2 * i - 3)`, explanation: "Calculate hollow gap." },
+    { code: '        print(lead + symbol + mid + symbol)', explanation: "Print boundaries.", highlightType: "output" }
+  ];
+
+  const jsLines = [
+    { code: `const rows = ${rows};`, explanation: "Apex height." },
+    { code: `const symbol = "${symbol}";`, explanation: "Selected symbol." },
+    { code: '// Upper half', explanation: "Top cone." },
+    { code: 'for (let i = 1; i <= rows; i++) {', explanation: "OUTER LOOP: Upper rows.", highlightType: "loop" },
+    { code: `    const lead = "${h.unitSpaces}".repeat(rows - i);`, explanation: "Left indentation." },
+    { code: '    if (i === 1) {', explanation: "Single star on apex row." },
+    { code: '        console.log(lead + symbol);', explanation: "Print top apex.", highlightType: "output" },
+    { code: '    } else {', explanation: "Two boundary stars." },
+    { code: `        const mid = "${h.unitSpaces}".repeat(2 * i - 3);`, explanation: "Hollow spacing gap." },
+    { code: '        console.log(lead + symbol + mid + symbol);', explanation: "Print left and right boundary.", highlightType: "output" },
+    { code: '    }' },
+    { code: '}' },
+    { code: '// Lower half', explanation: "Bottom cone." },
+    { code: 'for (let i = rows - 1; i >= 1; i--) {', explanation: "OUTER LOOP: Lower rows.", highlightType: "loop" },
+    { code: `    const lead = "${h.unitSpaces}".repeat(rows - i);`, explanation: "Left indentation." },
+    { code: '    if (i === 1) {', explanation: "Single star on apex row." },
+    { code: '        console.log(lead + symbol);', explanation: "Print bottom apex.", highlightType: "output" },
+    { code: '    } else {', explanation: "Two boundary stars." },
+    { code: `        const mid = "${h.unitSpaces}".repeat(2 * i - 3);`, explanation: "Hollow spacing gap." },
+    { code: '        console.log(lead + symbol + mid + symbol);', explanation: "Print left and right boundary.", highlightType: "output" },
+    { code: '    }' },
     { code: '}' }
   ];
 
