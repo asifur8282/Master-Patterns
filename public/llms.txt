@@ -5,33 +5,39 @@ description: Interactive Computer Science pattern learning catalog, visualizer, 
 
 # Master Patterns
 
-> Master Patterns is a modern Computer Science (CS) Pattern Learning Platform & Visualizer. It provides interactive step-by-step visual tracing and multi-language code generation (C, C++, Java, Python, JavaScript) for classic and advanced matrix/symbol pattern programs.
+> Master Patterns is a modern Computer Science (CS) Pattern Learning Platform & Visualizer. It provides interactive step-by-step visual tracing, in-browser JavaScript sandbox execution, and multi-language code generation (C, C++, Java, Python, JavaScript) for classic and advanced matrix/symbol pattern programs.
 
 Website: https://master-patterns.vercel.app/
 Developer: Asifur Rahaman (https://asifur-rahaman-portfolio.vercel.app/)
 
 ## Core Routes & Applications
 
-- [Catalog](https://master-patterns.vercel.app/): Interactive catalog of CS pattern programs with category filters, difficulty tags, and live output previews.
-- [Report an Error / Feedback](https://master-patterns.vercel.app/report): Web3Forms-integrated error reporting tool for reporting code syntax errors, rendering issues, or sending feedback.
+- [Catalog](https://master-patterns.vercel.app/): Interactive catalog of 26 CS pattern programs with category filters, difficulty tags, live canvas previews, and custom symbol replacements.
+- [Report an Error / Feedback](https://master-patterns.vercel.app/report): Web3Forms-integrated error reporting tool for reporting code syntax errors, rendering issues, or suggesting new patterns.
 - [Sitemap](https://master-patterns.vercel.app/sitemap): Descriptive platform index, pattern categorization matrix, and architecture specifications.
 
-## Pattern Categories
+## Pattern Categories (26 Total Patterns)
 
-- **Star Patterns**: Classic right-angled pyramids, inverted triangles, diamonds, hourglasses, and hollow stars.
-- **Number Patterns**: Incrementing pyramids, Pascal's triangle, Floyd's triangle, palindromic number pyramids, and binary alternating matrices.
-- **Character / Alphabet Patterns**: Repeated letter pyramids, A-Z sequence grids, and palindromic letter diamonds.
-- **Pyramid & Diamond Patterns**: Centered symmetrical pyramids, hollow diamonds, and nested polygon frames.
-- **Advanced Matrix Patterns**: Spiral matrices, concentric number squares, snake patterns, and checkerboard grids.
+- **Star Patterns**: Classic right-angled pyramids, inverted triangles, diamonds, hourglasses, butterfly patterns, and hollow stars.
+- **Number Patterns**: Incrementing pyramids, Pascal's triangle, Floyd's triangle, palindromic number pyramids, Binary (0-1) triangles, and symmetrical Number Crown bridges.
+- **Character / Alphabet Patterns**: Repeated letter pyramids, A-Z sequence grids, continuous alphabet triangles, and reverse alphabet triangles.
+- **Pyramid & Diamond Patterns**: Centered symmetrical pyramids, odd star pyramids (2*i - 1), inverted odd pyramids, and geometric hollow diamonds.
+- **Advanced Matrix Patterns**: Concentric number squares (distance-to-boundary matrix algorithm), hollow squares, and mathematical heart shapes.
 
-## Code Generators Supported
+## Code Generators & Developer Tools
 
-Master Patterns generates production-grade, formatted source code with configurable loop variables, space padding, and row parameters across 5 languages:
+Master Patterns generates production-grade, formatted source code with configurable loop variables, space padding, and row parameters across 5 programming languages:
 - **C** (`stdio.h`)
 - **C++** (`<iostream>`)
-- **Java** (`System.out.print`)
+- **Java** (`System.out.print` with dynamic class naming matching file specifications)
 - **Python** (`print()`)
 - **JavaScript** (`console.log`)
+
+### Interactive Learning Capabilities
+- **Line-by-Line Code Breakdown**: Every line of code includes educational annotations detailing loop counters, spacing math, and character printing.
+- **Live In-Browser Code Playground**: Sandbox code runner powered by isolated Web Workers with a 1.5-second watchdog timer protecting against infinite loops.
+- **One-Click File Export**: Direct local file downloader for `.c`, `.cpp`, `.java`, `.py`, and `.js` source files.
+- **Step-by-Step Execution Visualizer**: Visual frame-by-frame animation player showing nested loop execution row-by-row.
 
 ## Technical Specifications
 
