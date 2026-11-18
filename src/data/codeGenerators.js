@@ -1787,7 +1787,6 @@ function getNum008Code(rows, sp, lang) {
 
 function getNum009Code(rows, sp, lang) {
   const spaces = " ".repeat(sp);
-  const size = 2 * rows - 1;
 
   const cLines = [
     { code: '#include <stdio.h>', explanation: "Standard I/O header." },

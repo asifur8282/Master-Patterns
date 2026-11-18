@@ -702,6 +702,201 @@ h1, h2, h3, h4, .brand-title {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Code Viewer Header & Actions */
+.code-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.code-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-playground-active {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(99, 102, 241, 0.25)) !important;
+  border: 1px solid var(--accent-cyan) !important;
+  color: var(--accent-cyan) !important;
+  font-weight: 600;
+}
+
+/* Playground Sandbox Styles */
+.playground-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.playground-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.playground-btn-run {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: #ffffff;
+  border: none;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+  font-size: 0.84rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.playground-btn-run:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.playground-btn-run:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.playground-shortcut-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.playground-shortcut-hint kbd {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.playground-editor-box {
+  display: flex;
+  width: 100%;
+  background: var(--terminal-bg);
+  border: 1px solid var(--terminal-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 16px;
+  height: 250px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.playground-gutter {
+  width: 38px;
+  padding: 12px 6px;
+  text-align: right;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.3);
+  border-right: 1px solid var(--terminal-border);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.playground-gutter > div {
+  height: 1.23rem;
+}
+
+.playground-textarea {
+  flex: 1;
+  background: transparent;
+  color: #f1f5f9;
+  border: none;
+  outline: none;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  resize: none;
+  overflow-y: auto;
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 2;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .playground-textarea {
+  color: #0f172a;
+}
+
+.playground-console {
+  background: var(--terminal-bg);
+  border: 1px solid var(--terminal-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.playground-console-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.75);
+  border-bottom: 1px solid var(--terminal-border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .playground-console-header {
+  background: rgba(226, 232, 240, 0.7);
+}
+
+.playground-console-body {
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--terminal-text);
+  white-space: pre;
+  min-height: 110px;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.playground-console-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+}
+
+.spin-animation {
+  animation: spin 1s linear infinite;
+}
+
 /* Responsive Mobile Adjustments */
 @media (max-width: 600px) {
   .navbar {
