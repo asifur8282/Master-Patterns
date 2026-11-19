@@ -48,6 +48,17 @@
   - Interactive `/sitemap` navigation page.
   - Machine-readable `llms.txt` and ARD (`ai-catalog.json`) integration for AI agents and LLM crawlers.
 
+- 🔊 **Tactile UI Sound Engine (`uisfx`)**:
+  - Interactive audio feedback system powered by the Web Audio API with zero external audio assets.
+  - **3 Audio Themes**: Switch between **Sci-Fi** (default FM harmonics), **Glass** (crisp acoustic resonance), and **Minimal** (subtle mechanical clicks) by right-clicking the sound button in the navbar.
+  - **Comprehensive Interactive Cues**: Audio feedback on button clicks, card selections, symbol chips, code execution, download actions, theme switches, and interactive hover effects.
+  - **Browser Policy & SSR Compliant**: 100% Chrome Autoplay compliant with gesture-unlocked audio contexts, mute state persistence in `localStorage`, and fine pointer detection.
+
+- 💎 **Brand Identity & Custom Favicon System**:
+  - Custom vector SVG favicon (`favicon.svg`) featuring the signature cyan-indigo-purple brand squircle and 3-tier CS pattern layers.
+  - High-resolution Apple Touch Icon ($180\times180\text{px}$) for iOS/Android home screens and $32\times32\text{px}$ raster fallback.
+  - PWA mobile browser theme color (`#0f172a`) and crisp high-DPI rendering across both dark and light browser chrome.
+
 - 🌙 **Themes & Design**:
   - Dark Mode and Hazy Bluish-Pink Light Theme with modern glassmorphism, responsive grid layout, and custom typography (Fira Code, Inter, Poppins).
 
@@ -56,9 +67,11 @@
 ## 🛠️ Tech Stack
 
 - **Framework**: React 19 + Vite 8
+- **Audio Engine**: Web Audio API via `uisfx` (procedural synthesized sound packs)
 - **Styling**: Vanilla CSS Design System with CSS Custom Properties, Glassmorphism, and Fluid Flexbox/Grid
-- **Icons**: Lucide React
+- **Icons**: Lucide React & Custom Brand Vector Favicon
 - **Typography**: Poppins, Inter, Fira Code
+- **Testing & Quality**: Node.js Test Runner (`node --test`), Oxlint
 - **Deployment**: Vercel Single-Page App (SPA) with rewrite routing
 
 ---
@@ -81,12 +94,17 @@
    npm run dev
    ```
 
-4. **Run code quality checks**:
+4. **Run unit tests**:
+   ```bash
+   npm test
+   ```
+
+5. **Run code quality checks (linter)**:
    ```bash
    npm run lint
    ```
 
-5. **Build for production**:
+6. **Build for production**:
    ```bash
    npm run build
    ```
