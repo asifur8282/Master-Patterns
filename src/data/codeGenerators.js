@@ -839,9 +839,6 @@ function getAst010Code(rows, sp, symbol, lang) {
 
 
 function getAst011Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang, sp);
-  const symLen = Array.from(symbol).length;
-
   // Odd pyramid: symbols are PACKED (no inter-symbol spaces)
   // so we use dedicated no-space print expressions per language
   const printNoSpace = {
@@ -916,8 +913,6 @@ function getAst011Code(rows, sp, symbol, lang) {
 }
 
 function getAst012Code(rows, sp, symbol, lang) {
-  const h = getSymbolHelpers(symbol, lang, sp);
-
   // Inverted Odd pyramid: symbols PACKED (no inter-symbol spaces)
   const printNoSpace = {
     c: `printf("%c", symbol);`,

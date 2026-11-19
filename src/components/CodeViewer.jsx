@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { generateCode } from '../data/codeGenerators';
+import sound from '../services/sound';
 import { 
   Code2, 
   Copy, 
@@ -45,6 +46,13 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
     .map((l) => l.code)
     .join('\n');
 
+  // Ensure active loop is stopped on component unmount
+  useEffect(() => {
+    return () => {
+      sound.stopLoop('playground-run');
+    };
+  }, []);
+
   // Reset active line when language or pattern changes
   useEffect(() => {
     const defaultLine = Math.min(3, codeData.length);
@@ -87,6 +95,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
   };
 
   const handleCopyCode = () => {
+    sound.copy();
     const rawCode = (isPlaygroundMode && lang === 'js')
       ? userCode
       : codeData.map((l) => l.code).join('\n');
@@ -96,6 +105,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
   };
 
   const handleDownloadCode = () => {
+    sound.press();
     const rawCode = (isPlaygroundMode && lang === 'js')
       ? userCode
       : codeData.map((l) => l.code).join('\n');
@@ -110,11 +120,14 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
+    sound.success();
     setDownloaded(true);
     setTimeout(() => setDownloaded(false), 2000);
   };
 
   const handleTogglePlayground = () => {
+    const nextState = !isPlaygroundMode;
+    sound.toggle(nextState);
     if (!isPlaygroundMode) {
       setIsPlaygroundMode(true);
       setLang('js');
@@ -127,6 +140,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
   };
 
   const handleResetCode = () => {
+    sound.press();
     setUserCode(defaultJsCode);
     setExecutionOutput(null);
     setExecutionError(null);
@@ -138,6 +152,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
     setIsRunning(true);
     setExecutionError(null);
     setExecutionOutput(null);
+    sound.startLoop('playground-run', 'processing');
 
     const workerScript = `
       self.onmessage = function(e) {
@@ -188,6 +203,8 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
           worker.terminate();
           URL.revokeObjectURL(workerUrl);
           setIsRunning(false);
+          sound.stopLoop('playground-run');
+          sound.error();
           setExecutionError('Execution timed out (1.5s). Possible infinite loop detected! Check your loop conditions (e.g. ensure loop counter increments properly).');
         }
       }, 1500);
@@ -196,13 +213,16 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
         clearTimeout(timer);
         setIsRunning(false);
         URL.revokeObjectURL(workerUrl);
+        sound.stopLoop('playground-run');
 
         if (e.data.success) {
           const out = e.data.logs.join('\n');
           setExecutionOutput(out || '(Code ran successfully with no console output)');
           setExecutionTime(e.data.elapsed);
+          sound.success();
         } else {
           setExecutionError(e.data.error);
+          sound.error();
         }
       };
 
@@ -210,6 +230,8 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
         clearTimeout(timer);
         setIsRunning(false);
         URL.revokeObjectURL(workerUrl);
+        sound.stopLoop('playground-run');
+        sound.error();
         setExecutionError(err.message || 'Worker execution error');
       };
 
@@ -229,10 +251,14 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
         runFn(customConsole);
         const elapsed = Date.now() - startTime;
         setIsRunning(false);
+        sound.stopLoop('playground-run');
+        sound.success();
         setExecutionOutput(logs.join('\n') || '(Code ran successfully with no console output)');
         setExecutionTime(elapsed);
       } catch (runErr) {
         setIsRunning(false);
+        sound.stopLoop('playground-run');
+        sound.error();
         setExecutionError(runErr.message || String(runErr));
       }
     }
@@ -283,6 +309,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
           <button 
             className={`btn btn-sm ${isPlaygroundMode ? 'btn-playground-active' : 'btn-secondary'}`}
             onClick={handleTogglePlayground}
+            onMouseEnter={() => sound.hover()}
             title={isPlaygroundMode ? "Switch back to Line Explanation Mode" : "Open In-Browser Sandbox Playground"}
           >
             {isPlaygroundMode ? (
@@ -299,13 +326,23 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
           </button>
 
           {/* Download Code File */}
-          <button className="btn btn-sm" onClick={handleDownloadCode} title={`Download as ${getDownloadFileName()}`}>
+          <button 
+            className="btn btn-sm" 
+            onClick={handleDownloadCode} 
+            onMouseEnter={() => sound.hover()}
+            title={`Download as ${getDownloadFileName()}`}
+          >
             {downloaded ? <Check size={14} color="var(--accent-emerald)" /> : <Download size={14} />}
             <span>{downloaded ? 'Downloaded!' : 'Download File'}</span>
           </button>
 
           {/* Copy Code */}
-          <button className="btn btn-sm" onClick={handleCopyCode} title="Copy snippet to clipboard">
+          <button 
+            className="btn btn-sm" 
+            onClick={handleCopyCode} 
+            onMouseEnter={() => sound.hover()}
+            title="Copy snippet to clipboard"
+          >
             {copied ? <Check size={14} color="var(--accent-emerald)" /> : <Copy size={14} />}
             <span>{copied ? 'Copied!' : 'Copy Code'}</span>
           </button>
@@ -321,6 +358,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
               <button 
                 className="playground-btn-run"
                 onClick={runSandboxCode}
+                onMouseEnter={() => sound.hover()}
                 disabled={isRunning}
                 title="Execute code in sandbox (Ctrl + Enter)"
               >
@@ -340,6 +378,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
               <button 
                 className="btn btn-sm btn-secondary"
                 onClick={handleResetCode}
+                onMouseEnter={() => sound.hover()}
                 title="Revert edits back to original pattern code"
               >
                 <RotateCcw size={14} />
@@ -397,7 +436,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
                 <button 
                   className="btn btn-icon btn-sm"
                   style={{ padding: '2px 6px', height: 'auto', background: 'transparent', border: 'none' }}
-                  onClick={() => { setExecutionOutput(null); setExecutionError(null); }}
+                  onClick={() => { sound.press(); setExecutionOutput(null); setExecutionError(null); }}
                   title="Clear Console"
                 >
                   <Trash2 size={13} color="var(--text-muted)" />
@@ -443,7 +482,8 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
               <button
                 key={l.id}
                 className={`lang-tab ${lang === l.id ? 'active' : ''}`}
-                onClick={() => setLang(l.id)}
+                onClick={() => { sound.select(); setLang(l.id); }}
+                onMouseEnter={() => sound.hover()}
               >
                 {l.label}
               </button>
@@ -462,7 +502,7 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
                 <div
                   key={line.lineNumber}
                   className={`code-line ${isSelected ? 'active-line' : ''}`}
-                  onClick={() => setActiveLineNumber(line.lineNumber)}
+                  onClick={() => { sound.select(); setActiveLineNumber(line.lineNumber); }}
                 >
                   <span className="line-num">{line.lineNumber}</span>
                   <span className="line-text">{line.code}</span>
@@ -496,3 +536,4 @@ export function CodeViewer({ patternId, rows, spacePadding, symbol }) {
 }
 
 export default CodeViewer;
+

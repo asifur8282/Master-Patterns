@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PatternCard } from './PatternCard';
 import { Search, Terminal } from 'lucide-react';
+import sound from '../services/sound';
 
 export function PatternGallery({ patterns, onSelectPattern }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,6 +16,11 @@ export function PatternGallery({ patterns, onSelectPattern }) {
     const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const handleSelectCategory = (cat) => {
+    sound.select();
+    setSelectedCategory(cat);
+  };
 
   return (
     <div className="gallery-container">
@@ -44,7 +50,7 @@ export function PatternGallery({ patterns, onSelectPattern }) {
             <button
               key={cat}
               className={`pill ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => handleSelectCategory(cat)}
             >
               {cat === 'All' ? 'All Patterns' : `${cat} Patterns`}
             </button>

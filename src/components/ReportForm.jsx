@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, 
   Bug, 
@@ -12,6 +12,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { PATTERNS } from '../data/patterns';
+import sound from '../services/sound';
 
 export function ReportForm({ initialPattern, onBack }) {
   const [feedbackType, setFeedbackType] = useState('code_error'); // 'code_error' | 'pattern_broken' | 'general_feedback'
@@ -27,6 +28,13 @@ export function ReportForm({ initialPattern, onBack }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('idle'); // 'idle' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Clean up any pending loops on unmount
+  useEffect(() => {
+    return () => {
+      sound.stopLoop('report-submit');
+    };
+  }, []);
 
   // Determine active pattern name and code ID
   const foundPattern = PATTERNS.find(p => p.name === selectedPattern);
@@ -49,6 +57,7 @@ export function ReportForm({ initialPattern, onBack }) {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage('');
+    sound.startLoop('report-submit', 'loading');
 
     const apiKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "423b6778-3838-4f71-9e15-657e5776757b";
     const finalSubject = getComputedSubject();
@@ -81,31 +90,43 @@ export function ReportForm({ initialPattern, onBack }) {
       const data = await response.json();
 
       if (data.success) {
+        sound.stopLoop('report-submit');
+        sound.success();
         setSubmitStatus('success');
       } else {
         // If API key is still placeholder, display warning or simulated success in dev
         if (apiKey === 'YOUR_WEB3FORMS_ACCESS_KEY') {
           console.warn('Web3Forms API key is not set yet. Simulated successful form submission for demo.');
+          sound.stopLoop('report-submit');
+          sound.success();
           setSubmitStatus('success');
         } else {
+          sound.stopLoop('report-submit');
+          sound.error();
           setSubmitStatus('error');
           setErrorMessage(data.message || 'Submission failed. Please try again later.');
         }
       }
-    } catch (err) {
+    } catch {
       // Fallback in case of network issue or key configuration preview
       if (apiKey === 'YOUR_WEB3FORMS_ACCESS_KEY') {
+        sound.stopLoop('report-submit');
+        sound.success();
         setSubmitStatus('success');
       } else {
+        sound.stopLoop('report-submit');
+        sound.error();
         setSubmitStatus('error');
         setErrorMessage('Network error occurred. Please check your connection and try again.');
       }
     } finally {
+      sound.stopLoop('report-submit');
       setIsSubmitting(false);
     }
   };
 
   const resetForm = () => {
+    sound.press();
     setSubmitStatus('idle');
     setName('');
     setEmail('');
@@ -116,7 +137,14 @@ export function ReportForm({ initialPattern, onBack }) {
   return (
     <div className="report-container">
       <div className="report-header">
-        <button className="btn btn-secondary back-btn" onClick={onBack}>
+        <button 
+          className="btn btn-secondary back-btn" 
+          onClick={() => {
+            sound.press();
+            onBack();
+          }}
+          onMouseEnter={() => sound.hover()}
+        >
           <ArrowLeft size={16} />
           <span>Back to Catalog</span>
         </button>
@@ -156,10 +184,21 @@ export function ReportForm({ initialPattern, onBack }) {
           </div>
 
           <div className="success-actions">
-            <button className="btn btn-primary" onClick={onBack}>
+            <button 
+              className="btn btn-primary" 
+              onClick={() => {
+                sound.press();
+                onBack();
+              }}
+              onMouseEnter={() => sound.hover()}
+            >
               Return to Catalog
             </button>
-            <button className="btn btn-secondary" onClick={resetForm}>
+            <button 
+              className="btn btn-secondary" 
+              onClick={resetForm}
+              onMouseEnter={() => sound.hover()}
+            >
               Submit Another Report
             </button>
           </div>
@@ -176,7 +215,10 @@ export function ReportForm({ initialPattern, onBack }) {
             <div className="options-grid">
               <div 
                 className={`option-card ${feedbackType === 'code_error' ? 'selected' : ''}`}
-                onClick={() => setFeedbackType('code_error')}
+                onClick={() => {
+                  sound.select();
+                  setFeedbackType('code_error');
+                }}
               >
                 <div className="option-radio">
                   <div className="radio-inner" />
@@ -192,7 +234,10 @@ export function ReportForm({ initialPattern, onBack }) {
 
               <div 
                 className={`option-card ${feedbackType === 'pattern_broken' ? 'selected' : ''}`}
-                onClick={() => setFeedbackType('pattern_broken')}
+                onClick={() => {
+                  sound.select();
+                  setFeedbackType('pattern_broken');
+                }}
               >
                 <div className="option-radio">
                   <div className="radio-inner" />
@@ -208,7 +253,10 @@ export function ReportForm({ initialPattern, onBack }) {
 
               <div 
                 className={`option-card ${feedbackType === 'general_feedback' ? 'selected' : ''}`}
-                onClick={() => setFeedbackType('general_feedback')}
+                onClick={() => {
+                  sound.select();
+                  setFeedbackType('general_feedback');
+                }}
               >
                 <div className="option-radio">
                   <div className="radio-inner" />
@@ -269,7 +317,10 @@ export function ReportForm({ initialPattern, onBack }) {
                 id="pattern-select"
                 className="form-input select-input"
                 value={selectedPattern}
-                onChange={(e) => setSelectedPattern(e.target.value)}
+                onChange={(e) => {
+                  sound.select();
+                  setSelectedPattern(e.target.value);
+                }}
                 required
               >
                 {PATTERNS.map((p) => (
@@ -353,6 +404,7 @@ export function ReportForm({ initialPattern, onBack }) {
               type="submit"
               className="btn btn-primary submit-btn"
               disabled={isSubmitting}
+              onMouseEnter={() => !isSubmitting && sound.hover()}
             >
               {isSubmitting ? (
                 <>

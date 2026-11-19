@@ -4,6 +4,7 @@ import { PatternControls } from './PatternControls';
 import { PatternOutput } from './PatternOutput';
 import { CodeViewer } from './CodeViewer';
 import { StepVisualizer } from './StepVisualizer';
+import sound from '../services/sound';
 
 export function PatternLab({ pattern, onBack, onRequestReport }) {
   const [rows, setRows] = useState(pattern.defaultRows || 5);
@@ -14,7 +15,7 @@ export function PatternLab({ pattern, onBack, onRequestReport }) {
     setRows(pattern.defaultRows || 5);
     setSpacePadding(pattern.defaultSpaces || 1);
     setSymbol(pattern.defaultSymbol || '*');
-  }, [pattern.id]);
+  }, [pattern.id, pattern.defaultRows, pattern.defaultSpaces, pattern.defaultSymbol]);
 
   const activeSymbol = (symbol !== undefined && symbol !== null && symbol !== '') 
     ? symbol 
@@ -22,12 +23,26 @@ export function PatternLab({ pattern, onBack, onRequestReport }) {
 
   const output = pattern.generateOutput(rows, spacePadding, activeSymbol);
 
+  const handleBack = () => {
+    sound.press();
+    onBack();
+  };
+
+  const handleReport = () => {
+    sound.press();
+    if (onRequestReport) onRequestReport(pattern);
+  };
+
   return (
     <div className="lab-container">
       {/* Navigation & Header with Flex Wrap to Prevent Overflow */}
       <div className="lab-header">
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn btn-sm" onClick={onBack}>
+          <button 
+            className="btn btn-sm" 
+            onClick={handleBack}
+            onMouseEnter={() => sound.hover()}
+          >
             <ArrowLeft size={16} />
             Back to Pattern Catalog
           </button>
@@ -35,7 +50,8 @@ export function PatternLab({ pattern, onBack, onRequestReport }) {
           {onRequestReport && (
             <button 
               className="btn btn-sm"
-              onClick={() => onRequestReport(pattern)}
+              onClick={handleReport}
+              onMouseEnter={() => sound.hover()}
               style={{ background: 'rgba(239, 68, 68, 0.12)', color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.3)' }}
               title="Report an error or broken pattern"
             >

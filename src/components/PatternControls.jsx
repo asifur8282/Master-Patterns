@@ -1,16 +1,42 @@
 import React from 'react';
 import { Plus, Minus, Sliders, Type, Hash } from 'lucide-react';
+import sound from '../services/sound';
 
 export function PatternControls({
   rows,
   setRows,
-  spacePadding,
+  _spacePadding,
   setSpacePadding,
   symbol,
   setSymbol,
   defaultSymbol = '*'
 }) {
   const quickSymbols = ['*', '%', '#', '@', '$', '🐱', '★', '&', 'A'];
+
+  const handleRowIncrement = () => {
+    sound.press();
+    setRows((r) => Math.min(25, r + 1));
+  };
+
+  const handleRowDecrement = () => {
+    sound.press();
+    setRows((r) => Math.max(1, r - 1));
+  };
+
+  const handleSpaceIncrement = () => {
+    sound.press();
+    setSpacePadding((s) => Math.min(5, s + 1));
+  };
+
+  const handleSpaceDecrement = () => {
+    sound.press();
+    setSpacePadding((s) => Math.max(0, s - 1));
+  };
+
+  const handleSelectSymbol = (sym) => {
+    sound.select();
+    setSymbol(sym);
+  };
 
   return (
     <div className="glass-card controls-card">
@@ -25,7 +51,8 @@ export function PatternControls({
         <div className="quick-btn-grid">
           <button 
             className="btn" 
-            onClick={() => setRows((r) => Math.min(25, r + 1))}
+            onClick={handleRowIncrement}
+            onMouseEnter={() => sound.hover()}
             title="Increase number of rows by 1"
           >
             <Plus size={16} color="var(--accent-emerald)" />
@@ -34,7 +61,8 @@ export function PatternControls({
           
           <button 
             className="btn" 
-            onClick={() => setRows((r) => Math.max(1, r - 1))}
+            onClick={handleRowDecrement}
+            onMouseEnter={() => sound.hover()}
             title="Decrease number of rows by 1"
           >
             <Minus size={16} color="var(--accent-amber)" />
@@ -43,7 +71,8 @@ export function PatternControls({
 
           <button 
             className="btn" 
-            onClick={() => setSpacePadding((s) => Math.min(5, s + 1))}
+            onClick={handleSpaceIncrement}
+            onMouseEnter={() => sound.hover()}
             title="Increase spacing padding"
           >
             <Plus size={16} color="var(--accent-cyan)" />
@@ -52,7 +81,8 @@ export function PatternControls({
 
           <button 
             className="btn" 
-            onClick={() => setSpacePadding((s) => Math.max(0, s - 1))}
+            onClick={handleSpaceDecrement}
+            onMouseEnter={() => sound.hover()}
             title="Decrease spacing padding"
           >
             <Minus size={16} color="var(--accent-purple)" />
@@ -117,7 +147,7 @@ export function PatternControls({
               key={sym}
               className={`pill ${symbol === sym ? 'active' : ''}`}
               style={{ padding: '4px 12px', fontSize: '0.85rem' }}
-              onClick={() => setSymbol(sym)}
+              onClick={() => handleSelectSymbol(sym)}
             >
               {sym}
             </button>

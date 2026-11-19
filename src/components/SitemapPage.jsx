@@ -2,7 +2,6 @@ import React from 'react';
 import { 
   MapPin, 
   BookOpen, 
-  Layers, 
   Flag, 
   Code2, 
   Sparkles, 
@@ -15,6 +14,7 @@ import {
   Globe
 } from 'lucide-react';
 import { PATTERNS } from '../data/patterns';
+import sound from '../services/sound';
 
 export function SitemapPage({ onNavigate, onSelectPattern }) {
   // Group patterns by category
@@ -30,7 +30,14 @@ export function SitemapPage({ onNavigate, onSelectPattern }) {
     <div className="sitemap-container">
       {/* Header */}
       <div className="sitemap-header">
-        <button className="btn btn-secondary back-btn" onClick={() => onNavigate('gallery')}>
+        <button 
+          className="btn btn-secondary back-btn" 
+          onClick={() => {
+            sound.press();
+            onNavigate('gallery');
+          }}
+          onMouseEnter={() => sound.hover()}
+        >
           <ArrowLeft size={16} />
           <span>Back to Catalog</span>
         </button>
@@ -55,7 +62,14 @@ export function SitemapPage({ onNavigate, onSelectPattern }) {
         </h2>
 
         <div className="pages-grid">
-          <div className="sitemap-card clickable" onClick={() => onNavigate('gallery')}>
+          <div 
+            className="sitemap-card clickable" 
+            onClick={() => {
+              sound.select();
+              onNavigate('gallery');
+            }}
+            onMouseEnter={() => sound.hover()}
+          >
             <div className="card-top">
               <div className="icon-wrapper indigo">
                 <BookOpen size={22} />
@@ -72,7 +86,14 @@ export function SitemapPage({ onNavigate, onSelectPattern }) {
             </div>
           </div>
 
-          <div className="sitemap-card clickable" onClick={() => onNavigate('report')}>
+          <div 
+            className="sitemap-card clickable" 
+            onClick={() => {
+              sound.select();
+              onNavigate('report');
+            }}
+            onMouseEnter={() => sound.hover()}
+          >
             <div className="card-top">
               <div className="icon-wrapper amber">
                 <Flag size={22} />
@@ -123,7 +144,15 @@ export function SitemapPage({ onNavigate, onSelectPattern }) {
               </div>
               <ul className="pattern-list">
                 {categoriesMap[cat].map((p) => (
-                  <li key={p.id} className="pattern-item" onClick={() => onSelectPattern ? onSelectPattern(p) : onNavigate('gallery')}>
+                  <li 
+                    key={p.id} 
+                    className="pattern-item" 
+                    onClick={() => {
+                      sound.select();
+                      if (onSelectPattern) onSelectPattern(p);
+                      else onNavigate('gallery');
+                    }}
+                  >
                     <Code2 size={14} className="item-icon" />
                     <span className="item-name">{p.name}</span>
                     <span className="item-id">{p.id}</span>

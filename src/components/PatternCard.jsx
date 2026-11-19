@@ -1,5 +1,6 @@
 import React from 'react';
-import { Play, Sparkles } from 'lucide-react';
+import { Play } from 'lucide-react';
+import sound from '../services/sound';
 
 export function PatternCard({ pattern, onSelect }) {
   // Generate mini output preview (3-4 rows)
@@ -12,6 +13,11 @@ export function PatternCard({ pattern, onSelect }) {
       case 'Character': return 'badge-amber';
       default: return 'badge-indigo';
     }
+  };
+
+  const handleSelect = () => {
+    sound.press();
+    onSelect(pattern);
   };
 
   return (
@@ -32,7 +38,12 @@ export function PatternCard({ pattern, onSelect }) {
         </div>
       </div>
 
-      <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => onSelect(pattern)}>
+      <button 
+        className="btn btn-primary" 
+        style={{ width: '100%' }} 
+        onClick={handleSelect}
+        onMouseEnter={() => sound.hover()}
+      >
         <Play size={16} fill="currentColor" />
         Try This Pattern
       </button>

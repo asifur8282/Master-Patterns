@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, RefreshCw, Eye } from 'lucide-react';
+import sound from '../services/sound';
 
 export function StepVisualizer({ pattern, rows, spacePadding, symbol }) {
   const steps = pattern.getStepByStepData ? pattern.getStepByStepData(rows, spacePadding, symbol) : [];
@@ -31,6 +32,30 @@ export function StepVisualizer({ pattern, rows, spacePadding, symbol }) {
 
   const currentStep = steps[currentStepIndex] || steps[0];
 
+  const handlePlayToggle = () => {
+    const nextState = !isPlaying;
+    sound.playPause(nextState);
+    setIsPlaying(nextState);
+  };
+
+  const handlePrevStep = () => {
+    sound.step();
+    setIsPlaying(false);
+    setCurrentStepIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNextStep = () => {
+    sound.step();
+    setIsPlaying(false);
+    setCurrentStepIndex((prev) => Math.min(steps.length - 1, prev + 1));
+  };
+
+  const handleReset = () => {
+    sound.press();
+    setIsPlaying(false);
+    setCurrentStepIndex(0);
+  };
+
   return (
     <div className="glass-card" style={{ padding: '24px', marginTop: '24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -57,7 +82,8 @@ export function StepVisualizer({ pattern, rows, spacePadding, symbol }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
         <button 
           className="btn btn-primary"
-          onClick={() => setIsPlaying(!isPlaying)}
+          onClick={handlePlayToggle}
+          onMouseEnter={() => sound.hover()}
         >
           {isPlaying ? <Pause size={16} /> : <Play size={16} fill="currentColor" />}
           {isPlaying ? 'Pause' : 'Play Execution'}
@@ -65,32 +91,28 @@ export function StepVisualizer({ pattern, rows, spacePadding, symbol }) {
 
         <button 
           className="btn btn-icon"
-          onClick={() => {
-            setIsPlaying(false);
-            setCurrentStepIndex((prev) => Math.max(0, prev - 1));
-          }}
+          onClick={handlePrevStep}
+          onMouseEnter={() => sound.hover()}
           disabled={currentStepIndex === 0}
+          title="Previous Step"
         >
           <SkipBack size={16} />
         </button>
 
         <button 
           className="btn btn-icon"
-          onClick={() => {
-            setIsPlaying(false);
-            setCurrentStepIndex((prev) => Math.min(steps.length - 1, prev + 1));
-          }}
+          onClick={handleNextStep}
+          onMouseEnter={() => sound.hover()}
           disabled={currentStepIndex === steps.length - 1}
+          title="Next Step"
         >
           <SkipForward size={16} />
         </button>
 
         <button 
           className="btn btn-icon"
-          onClick={() => {
-            setIsPlaying(false);
-            setCurrentStepIndex(0);
-          }}
+          onClick={handleReset}
+          onMouseEnter={() => sound.hover()}
           title="Reset to Step 1"
         >
           <RefreshCw size={16} />

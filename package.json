@@ -7,12 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test test/sound.test.js"
   },
   "dependencies": {
     "lucide-react": "^1.28.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "uisfx": "^0.4.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
