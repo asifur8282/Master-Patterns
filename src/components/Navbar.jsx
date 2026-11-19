@@ -17,7 +17,7 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
 
   const handleCyclePack = (e) => {
     e.preventDefault();
-    const nextPack = soundPack === 'mechanical' ? 'minimal' : 'mechanical';
+    const nextPack = soundPack === 'scifi' ? 'glass' : soundPack === 'glass' ? 'minimal' : 'scifi';
     setSoundPack(nextPack);
     sound.press();
   };
@@ -87,7 +87,7 @@ export function Navbar({ theme, toggleTheme, activeView, setActiveView }) {
           onClick={toggleSound}
           onContextMenu={handleCyclePack}
           onMouseEnter={() => sound.hover()}
-          title={isSoundEnabled ? `Sound Active: ${soundPack === 'mechanical' ? 'Mechanical (Crisp Switches)' : 'Minimal (Soft Tone)'} — Right-click to switch sound pack` : "Enable sound effects"}
+          title={isSoundEnabled ? `Sound Active: ${soundPack.toUpperCase()} — Right-click to switch sound pack` : "Enable sound effects"}
           aria-label={isSoundEnabled ? "Mute sound effects" : "Enable sound effects"}
         >
           {isSoundEnabled ? <Volume2 size={18} color="var(--accent-cyan)" /> : <VolumeX size={18} color="var(--text-muted)" />}
