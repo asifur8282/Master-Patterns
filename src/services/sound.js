@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 const STORAGE_KEY_ENABLED = 'master_patterns_sound_enabled';
 const STORAGE_KEY_VOLUME = 'master_patterns_sound_volume';
 const STORAGE_KEY_PACK = 'master_patterns_sound_pack';
-const DEFAULT_PACK = 'mechanical';
+const DEFAULT_PACK = 'scifi'; // Crisp, holographic pings with high harmonic clarity across all laptop speakers
 
 let player = null;
 let currentPack = DEFAULT_PACK;
@@ -12,6 +12,9 @@ let isUnlocked = false;
 let isScrolling = false;
 let scrollTimeout = null;
 let lastHoverTime = 0;
+let lastPressTime = 0;
+let lastSelectTime = 0;
+let currentHoveredElement = null;
 const activeLoops = new Map();
 const listeners = new Set();
 
@@ -26,37 +29,40 @@ function notifyListeners(state) {
 }
 
 function getStoredPreference() {
-  if (typeof window === 'undefined') return { enabled: true, volume: 0.9, pack: DEFAULT_PACK };
+  if (typeof window === 'undefined') return { enabled: true, volume: 1.0, pack: DEFAULT_PACK };
   try {
     const savedEnabled = localStorage.getItem(STORAGE_KEY_ENABLED);
     const enabled = savedEnabled !== null ? savedEnabled === 'true' : true;
     const savedVolume = localStorage.getItem(STORAGE_KEY_VOLUME);
-    // Upgrade default to 0.9 if previously set to old low 0.5 default or unset
-    const volume = (savedVolume !== null && parseFloat(savedVolume) > 0.5) ? parseFloat(savedVolume) : 0.9;
+    const volume = savedVolume !== null ? parseFloat(savedVolume) : 1.0;
     const savedPack = localStorage.getItem(STORAGE_KEY_PACK);
     const pack = savedPack || DEFAULT_PACK;
     return { enabled, volume, pack };
   } catch {
-    return { enabled: true, volume: 0.9, pack: DEFAULT_PACK };
+    return { enabled: true, volume: 1.0, pack: DEFAULT_PACK };
   }
 }
 
-function initPlayer() {
-  if (typeof window === 'undefined') return null;
-  if (player) return player;
+function attachWindowListeners() {
+  if (typeof window === 'undefined') return;
+  if (window._sound_listeners_attached) return;
+  window._sound_listeners_attached = true;
 
-  const { enabled, volume, pack } = getStoredPreference();
-  if (!currentPack) {
-    currentPack = pack;
-  }
+  // Unlock Web Audio synchronously on genuine user gesture
+  const unlockAudio = () => {
+    const p = getPlayer();
+    if (p) {
+      p.unlock().then((ok) => {
+        if (ok) isUnlocked = true;
+      }).catch(() => {});
+    }
+  };
 
-  player = createUISFX({
-    pack: currentPack,
-    volume,
-    enabled,
+  ['pointerdown', 'keydown', 'click', 'touchstart'].forEach((eventType) => {
+    window.addEventListener(eventType, unlockAudio, { capture: true, passive: true });
   });
 
-  // Track scroll activity ONLY to suppress passive hover noises while scrolling
+  // Track scrolling to suppress passive hover noises while scrolling
   window.addEventListener('scroll', () => {
     isScrolling = true;
     if (scrollTimeout) clearTimeout(scrollTimeout);
@@ -65,17 +71,37 @@ function initPlayer() {
     }, 70);
   }, { passive: true });
 
-  // Unlock Web Audio on genuine user interactions
-  const unlockAudio = () => {
-    isUnlocked = true;
-    if (player) {
-      player.unlock().catch(() => {});
-    }
-  };
+  // Centralized hover delegation across all interactive buttons, cards, pills, and tabs
+  window.addEventListener('pointerover', (e) => {
+    if (e.pointerType === 'touch') return;
+    if (!(e.target instanceof Element)) return;
 
-  window.addEventListener('pointerdown', unlockAudio, { passive: true });
-  window.addEventListener('click', unlockAudio, { passive: true });
-  window.addEventListener('keydown', unlockAudio, { passive: true });
+    const interactive = e.target.closest('button, a, .pill, .lang-tab, .pattern-card, .clickable, .option-card, .symbol-chip, .btn');
+    if (!interactive) {
+      currentHoveredElement = null;
+      return;
+    }
+
+    if (currentHoveredElement === interactive) return;
+    currentHoveredElement = interactive;
+
+    sound.hover();
+  }, { capture: true, passive: true });
+}
+
+function getPlayer() {
+  if (typeof window === 'undefined') return null;
+  attachWindowListeners();
+  if (player) return player;
+
+  const { enabled, volume, pack } = getStoredPreference();
+  currentPack = pack;
+
+  player = createUISFX({
+    pack: currentPack,
+    volume,
+    enabled,
+  });
 
   return player;
 }
@@ -90,7 +116,7 @@ export const sound = {
     try {
       localStorage.setItem(STORAGE_KEY_PACK, pack);
     } catch {}
-    const p = initPlayer();
+    const p = getPlayer();
     if (p) {
       p.setPack(pack);
     }
@@ -98,7 +124,7 @@ export const sound = {
   },
 
   getPlayer() {
-    return initPlayer();
+    return getPlayer();
   },
 
   isUnlocked() {
@@ -107,7 +133,7 @@ export const sound = {
 
   async unlock() {
     if (typeof window === 'undefined') return false;
-    const p = initPlayer();
+    const p = getPlayer();
     if (!p) return false;
     try {
       const ok = await p.unlock();
@@ -130,33 +156,34 @@ export const sound = {
     isUnlocked = false;
     isScrolling = false;
     lastHoverTime = 0;
+    lastPressTime = 0;
+    lastSelectTime = 0;
+    currentHoveredElement = null;
+    if (typeof window !== 'undefined') delete window._sound_listeners_attached;
     activeLoops.clear();
   },
 
   isEnabled() {
     if (typeof window === 'undefined') return false;
-    const p = initPlayer();
-    return p ? p.isEnabled() : false;
+    const { enabled } = getStoredPreference();
+    return enabled;
   },
 
   setEnabled(enabled) {
     if (typeof window === 'undefined') return;
-    const p = initPlayer();
-    if (!p) return;
-
-    if (!enabled) {
-      // Stop all active loops and clear retained handles before disabling
-      this.stopAllLoops();
-      p.stopAll();
-      p.setEnabled(false);
-    } else {
-      p.setEnabled(true);
+    const p = getPlayer();
+    if (p) {
+      if (!enabled) {
+        this.stopAllLoops();
+        p.stopAll();
+        p.setEnabled(false);
+      } else {
+        p.setEnabled(true);
+      }
     }
-
     try {
       localStorage.setItem(STORAGE_KEY_ENABLED, String(enabled));
     } catch {}
-
     notifyListeners({ enabled, volume: this.getVolume(), pack: this.getPack() });
   },
 
@@ -173,17 +200,18 @@ export const sound = {
   },
 
   getVolume() {
-    if (typeof window === 'undefined') return 0.9;
-    const p = initPlayer();
-    return p ? p.getVolume() : 0.9;
+    if (typeof window === 'undefined') return 1.0;
+    const { volume } = getStoredPreference();
+    return volume;
   },
 
   setVolume(volume) {
     if (typeof window === 'undefined') return;
-    const p = initPlayer();
-    if (!p) return;
     const clamped = Math.max(0, Math.min(1, volume));
-    p.setVolume(clamped);
+    const p = getPlayer();
+    if (p) {
+      p.setVolume(clamped);
+    }
     try {
       localStorage.setItem(STORAGE_KEY_VOLUME, String(clamped));
     } catch {}
@@ -192,79 +220,86 @@ export const sound = {
 
   play(cue, options = {}) {
     if (typeof window === 'undefined') return null;
-    const p = initPlayer();
-    if (!p || !p.isEnabled()) return null;
+    const { enabled } = getStoredPreference();
+    if (!enabled) return null;
+
+    const p = getPlayer();
+    if (!p) return null;
 
     try {
-      // Ensure Web Audio is active on genuine interaction calls
-      if (!isUnlocked) {
-        isUnlocked = true;
-        p.unlock().catch(() => {});
-      }
-
       const playing = p.play(cue, options);
+      if (playing) {
+        isUnlocked = true;
+      }
       return playing;
     } catch {
       return null;
     }
   },
 
-  // Semantic interaction helpers (calibrated for clear, audible feedback)
   press(options = {}) {
-    return this.play('press', { volume: 0.85, ...options });
+    const now = Date.now();
+    if (now - lastPressTime < 30) return null;
+    lastPressTime = now;
+    return this.play('press', { volume: 0.95, ...options });
   },
 
   hover(options = {}) {
     if (typeof window === 'undefined' || isScrolling) return null;
-    // Strictly fine pointers only (no touch triggers)
-    if (!window.matchMedia('(pointer: fine)').matches) return null;
 
-    // Fast throttle (60ms) so deliberate sweeps across buttons are responsive
+    try {
+      const isFine = window.matchMedia('(any-pointer: fine)').matches || 
+                     window.matchMedia('(pointer: fine)').matches;
+      if (!isFine) return null;
+    } catch {}
+
     const now = Date.now();
-    if (now - lastHoverTime < 60) return null;
+    if (now - lastHoverTime < 50) return null;
     lastHoverTime = now;
 
-    return this.play('hover', { volume: 0.45, ...options });
+    return this.play('hover', { volume: 0.70, ...options });
   },
 
   toggle(state, options = {}) {
-    return this.play(state ? 'toggle-on' : 'toggle-off', { volume: 0.85, ...options });
+    return this.play(state ? 'toggle-on' : 'toggle-off', { volume: 0.95, ...options });
   },
 
   select(options = {}) {
-    return this.play('select', { volume: 0.80, ...options });
+    const now = Date.now();
+    if (now - lastSelectTime < 30) return null;
+    lastSelectTime = now;
+    return this.play('select', { volume: 0.90, ...options });
   },
 
   copy(options = {}) {
-    return this.play('copy', { volume: 0.85, ...options });
+    return this.play('copy', { volume: 0.95, ...options });
   },
 
   success(options = {}) {
-    return this.play('success', { volume: 0.90, isAsync: true, ...options });
+    return this.play('success', { volume: 1.0, isAsync: true, ...options });
   },
 
   error(options = {}) {
-    return this.play('error', { volume: 0.90, isAsync: true, ...options });
+    return this.play('error', { volume: 1.0, isAsync: true, ...options });
   },
 
   step(options = {}) {
-    return this.play('progress-step', { volume: 0.75, ...options });
+    return this.play('progress-step', { volume: 0.85, ...options });
   },
 
   playPause(isPlaying, options = {}) {
-    return this.play(isPlaying ? 'play' : 'pause', { volume: 0.80, ...options });
+    return this.play(isPlaying ? 'play' : 'pause', { volume: 0.90, ...options });
   },
 
-  // Loop Management (idempotent start, strict cleanup)
   startLoop(id, cue = 'processing', options = {}) {
     if (typeof window === 'undefined') return null;
     if (activeLoops.has(id)) {
       return activeLoops.get(id);
     }
-    const p = initPlayer();
-    if (!p || !p.isEnabled()) return null;
+    const { enabled } = getStoredPreference();
+    if (!enabled) return null;
 
-    const handle = this.play(cue, { loop: true, volume: 0.55, isAsync: true, ...options });
+    const handle = this.play(cue, { loop: true, volume: 0.60, isAsync: true, ...options });
     if (handle) {
       activeLoops.set(id, handle);
     }
@@ -306,8 +341,8 @@ export const sound = {
         await player.destroy();
       } catch {}
       player = null;
-      isUnlocked = false;
     }
+    isUnlocked = false;
   }
 };
 

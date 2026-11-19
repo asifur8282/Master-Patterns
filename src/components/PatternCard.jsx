@@ -21,7 +21,11 @@ export function PatternCard({ pattern, onSelect }) {
   };
 
   return (
-    <div className="glass-card pattern-card">
+    <div 
+      className="glass-card pattern-card" 
+      onClick={handleSelect}
+      style={{ cursor: 'pointer' }}
+    >
       <div>
         <div className="card-header">
           <span className="badge badge-indigo">{pattern.id}</span>
